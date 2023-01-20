@@ -1,0 +1,17 @@
+
+msgid "test"
+msgstr "This message is used for testing purposes."
+
+#: authentication.py:78
+msgid "Authorization header must contain two space-delimited values"
+msgstr ""
+
+#: authentication.py:104
+msgid "Given token not valid for any token type"
+msgstr ""
+
+#: authentication.py:116 authentication.py:143
+msgid "Token contained no recognizable user identification"
+msgstr ""
+
+    
