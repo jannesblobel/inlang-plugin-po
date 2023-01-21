@@ -1,5 +1,6 @@
 import type { Config, EnvironmentFunctions } from "@inlang/core/config";
 import type * as ast from "@inlang/core/ast";
+import gettextParser from "gettext-parser";
 
 /**
  * The plugin configuration.
@@ -26,20 +27,37 @@ export async function readResources(
   // merging the first argument from config (which contains all arguments)
   // with the custom pluginConfig argument
   args: Parameters<Config["readResources"]>[0] &
-    EnvironmentFunctions & { pluginConfig: PluginConfig }
+    EnvironmentFunctions & {
+      pluginConfig: PluginConfig;
+    }
 ): ReturnType<Config["readResources"]> {
   const result: ast.Resource[] = [];
-  for (const language of args.config.languages) {
+  // filter the referenceLanguage out of all languages,
+  // because the referencelanguage is an .pot file not a .po file
+  for (const language of args.config.languages.filter(
+    (value) => value !== args.config.referenceLanguage
+  )) {
     const resourcePath = args.pluginConfig.pathPattern.replace(
       "{language}",
       language
     );
-    // reading the json
-    const json = JSON.parse(
+
+    // reading the po
+    const po = gettextParser.po.parse(
       (await args.$fs.readFile(resourcePath, "utf-8")) as string
     );
-    result.push(parseResource(json, language));
+    // console.log(po.translations[""]);
+    // const poId = Object.keys(po.translations[""]);
+    // console.log(poId, "poID");
+
+    const poMsg = Object.entries(po.translations[""]);
+    console.log(poMsg, "poMsg");
+
+    //!!Question wie kann ich den Typ sauber setzten ?
+    result.push(parseResource(po.translations[""], language));
   }
+  //!! until this line is equal output to the example
+  // console.log(result, "result");
   return result;
 }
 
@@ -70,10 +88,13 @@ export async function writeResources(
  */
 function parseResource(
   /** flat JSON refers to the flatten function from https://www.npmjs.com/package/flat */
-  flatJson: Record<string, string>,
+  //!!remove any @samuel objectstring[]
+  flatJson: Record<string, any>,
   language: string
 ): ast.Resource {
+  // console.log(flatJson, "flatjson");
   return {
+    // metadata
     type: "Resource",
     languageTag: {
       type: "LanguageTag",
@@ -91,14 +112,21 @@ function parseResource(
  * @example
  *  parseMessage("test", "Hello world")
  */
-function parseMessage(id: string, value: string): ast.Message {
+function parseMessage(id: string, value: any): ast.Message {
+  // console.log(id, "ich bin eine id");
+  // console.log(value, "     !!!!value");
+
   return {
     type: "Message",
     id: {
       type: "Identifier",
       name: id,
     },
-    pattern: { type: "Pattern", elements: [{ type: "Text", value: value }] },
+
+    pattern: {
+      type: "Pattern",
+      elements: [{ type: "Text", value: value }],
+    },
   };
 }
 
@@ -113,9 +141,10 @@ function parseMessage(id: string, value: string): ast.Message {
  *  serializeResource(resource)
  */
 function serializeResource(resource: ast.Resource): string {
-  const json = Object.fromEntries(resource.body.map(serializeMessage));
+  const po = Object.fromEntries(resource.body.map(serializeMessage));
   // stringyify the object with beautification.
-  return JSON.stringify(json, null, 2);
+  // console.log(po);
+  return JSON.stringify(po, null, 2);
 }
 
 /**
