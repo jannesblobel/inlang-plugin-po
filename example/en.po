@@ -1,8 +1,10 @@
 
 
+
+
 #: authentication.py:78
 msgid "ich bin english must contain two space-delimited values"
-msgstr ""
+msgstr "Hello"
 
 
 

@@ -43,13 +43,11 @@ export async function readResources(
       "{language}",
       language
     );
-
     // reading the po
     const po = gettextParser.po.parse(
       (await args.$fs.readFile(resourcePath, "utf-8")) as string
     );
 
-    console.log(po, "bin ich das normale");
     result.push(parseResource(po.translations[""], language));
   }
 
