@@ -7,7 +7,7 @@ export async function initializeConfig(env) {
 
   const pluginConfig = {
     // language mean the name of you file 
-    pathPattern: "./{language}.po",
+    pathPattern: "./example/{language}.po",
   };
 
   return {
