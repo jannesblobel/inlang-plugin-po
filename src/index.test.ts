@@ -1,5 +1,5 @@
 // @ts-ignore
-import { initializeConfig } from "../example/inlang.config.js";
+import { initializeConfig } from "../inlang.config.js";
 import { describe, it, expect } from "vitest";
 import nodeFs from "node:fs";
 import { fs as memfs } from "memfs";
@@ -9,6 +9,7 @@ import {
   EnvironmentFunctions,
 } from "@inlang/core/config";
 import { query } from "@inlang/core/query";
+import gettextParser from "gettext-parser";
 
 const env = await initializeTestEnvironment();
 const config = (await initializeConfig(env)) as Config;
@@ -45,11 +46,12 @@ describe("plugin", async () => {
             type: "Message",
             pattern: {
               type: "Pattern",
-              elements: [{ type: "Text", value: "Newly created message" }],
+              elements: [{ type: "Text", value: ["Newly created message"] }],
             },
           },
         })
         .unwrap();
+
       const updatedResources = [
         ...resources.filter(
           (resource) =>
@@ -57,14 +59,21 @@ describe("plugin", async () => {
         ),
         updatedReferenceResource,
       ];
+
       await config.writeResources({ config, resources: updatedResources });
-      const json = JSON.parse(
+
+      const po = gettextParser.po.parse(
         (await env.$fs.readFile(
-          `/example/${config.referenceLanguage}.json`,
+          `/example/${config.referenceLanguage}.po`,
           "utf-8"
         )) as string
       );
-      expect(json["new-message"]).toBe("Newly created message");
+      var output = gettextParser.po.compile(po);
+      console.log(output.toString("hex").replace(/(.)(.)/g, "$1$2 "));
+
+      expect(po.translations[""]["new-message"]).toBe([
+        "Newly created message",
+      ]);
     });
   });
 });
@@ -78,9 +87,9 @@ async function initializeTestEnvironment(): Promise<EnvironmentFunctions> {
   const $fs = memfs.promises;
 
   // change the working directory to the inlang config directory to resolve relative paths
-  process.cwd = () => "/example";
+  process.cwd = () => "/";
   const $import = initialize$import({
-    workingDirectory: "/example",
+    workingDirectory: "/",
     fs: $fs,
     fetch,
   });
@@ -95,7 +104,7 @@ async function initializeTestEnvironment(): Promise<EnvironmentFunctions> {
     await $fs.mkdir(path, { recursive: true });
 
     for (const file of await nodeFs.promises.readdir("./" + path)) {
-      const isFile = file.indexOf('.') > -1
+      const isFile = file.indexOf(".") > -1;
       if (isFile) {
         await $fs.writeFile(
           `${path}/${file}`,
@@ -103,14 +112,14 @@ async function initializeTestEnvironment(): Promise<EnvironmentFunctions> {
           { encoding: "utf-8" }
         );
       } else {
-        await copyDirectory(`${path}/${file}`)
-      };
+        await copyDirectory(`${path}/${file}`);
+      }
     }
-  }
+  };
 
   // only /dist and /example are needed and therefore copied
   for (const path of ["/dist", "/example"]) {
-    await copyDirectory(path)
+    await copyDirectory(path);
   }
 
   return env;
