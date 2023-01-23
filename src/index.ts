@@ -68,9 +68,8 @@ export async function writeResources(
       resource.languageTag.name
     );
     const poFile = serializeResource(resource);
-    // console.log(poFile);
-    // const text = gettextParser.po.compile(poFile);
-    // await args.$fs.writeFile(resourcePath, text, { encoding: "utf-8" });
+    const text = gettextParser.po.compile(poFile);
+    await args.$fs.writeFile(resourcePath, text, { encoding: "utf-8" });
   }
 }
 
@@ -163,7 +162,7 @@ function serializeMessage(
   message: ast.Message
 ): gettextParser.GetTextTranslation {
   return {
-    comments: (message.metadata as any)?.comments,
+    comments: message.metadata as gettextParser.GetTextComment,
     msgid: message.id.name,
     msgstr: [message.pattern.elements[0].value],
   };

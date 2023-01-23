@@ -40,8 +40,9 @@ describe("plugin", async () => {
       const updatedReferenceResource = query(referenceResource)
         .create({
           message: {
-            id: { type: "Identifier", name: "new-message" },
             type: "Message",
+
+            id: { type: "Identifier", name: "new-message" },
             pattern: {
               type: "Pattern",
               elements: [{ type: "Text", value: "Newly created message" }],
@@ -55,19 +56,24 @@ describe("plugin", async () => {
         ),
         updatedReferenceResource,
       ];
-      await config.writeResources({ config, resources: updatedResources });
+      const res = await config.writeResources({
+        config,
+        resources: updatedResources,
+      });
 
       const response = await config.readResources({ config });
-
       console.log(response);
-
       const testResource = response.find(
         (resource) => resource.languageTag.name === "en"
       );
       if (testResource === undefined) {
         throw Error("reference resource not found");
       }
+
       const message = query(referenceResource).get({ id: "new-message" });
+      // const message = query(referenceResource).get({ id: "test" });
+
+      console.log(message, "message");
       expect(message?.pattern.elements[0].value).toBe("Newly created message");
     });
   });
