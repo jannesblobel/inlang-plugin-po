@@ -1,5 +1,4 @@
-// @ts-ignore
-import { initializeConfig } from "../inlang.config.js";
+import { defineConfig } from "../inlang.config.js";
 import { describe, it, expect } from "vitest";
 import nodeFs from "node:fs";
 import { fs as memfs } from "memfs";
@@ -11,19 +10,19 @@ import {
 import { query } from "@inlang/core/query";
 
 const env = await initializeTestEnvironment();
-const config = (await initializeConfig(env)) as Config;
+const config = (await defineConfig(env)) as Config;
 
 describe("plugin", async () => {
   const resources = await config.readResources({ config });
   const referenceResource = resources.find(
-    (resource) => resource.languageTag.language === config.referenceLanguage
+    (resource) => resource.languageTag.name === config.referenceLanguage
   )!;
 
   describe("readResources()", async () => {
     it("should return an array of resources that matches config.languages", () => {
       expect(resources.length).toBe(config.languages.length);
       for (const resource of resources) {
-        expect(config.languages.includes(resource.languageTag.language));
+        expect(config.languages.includes(resource.languageTag.name));
       }
     });
 
