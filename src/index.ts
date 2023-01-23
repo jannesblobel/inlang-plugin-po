@@ -62,7 +62,6 @@ export async function writeResources(
   args: Parameters<Config["writeResources"]>[0] &
     EnvironmentFunctions & { pluginConfig: PluginConfig }
 ): ReturnType<Config["writeResources"]> {
-  console.log(args.resources, "wo sthet was");
   for (const resource of args.resources) {
     const resourcePath = args.pluginConfig.pathPattern.replace(
       "{language}",

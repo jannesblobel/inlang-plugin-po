@@ -9,7 +9,6 @@ import {
   EnvironmentFunctions,
 } from "@inlang/core/config";
 import { query } from "@inlang/core/query";
-import gettextParser from "gettext-parser";
 
 const env = await initializeTestEnvironment();
 const config = (await initializeConfig(env)) as Config;
