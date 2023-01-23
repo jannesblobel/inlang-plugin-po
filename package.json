@@ -15,7 +15,6 @@
   "dependencies": {
     "@inlang/core": "^0.3.0-prerelease.7",
     "gettext-parser": "^6.0.0",
-    "process": "^0.11.10",
     "string_decoder": "^1.3.0",
     "util": "^0.12.5"
   },
