@@ -65,7 +65,7 @@ export async function writeResources(
   for (const resource of args.resources) {
     const resourcePath = args.pluginConfig.pathPattern.replace(
       "{language}",
-      resource.languageTag.language
+      resource.languageTag.name
     );
 
     await args.$fs.writeFile(resourcePath, serializeResource(resource));
@@ -84,7 +84,7 @@ function parseResource(flatPo: any, language: string): ast.Resource {
     type: "Resource",
     languageTag: {
       type: "LanguageTag",
-      language: language,
+      name: language,
     },
     body: Object.entries(flatPo)
       .filter(([value]) => value !== "")

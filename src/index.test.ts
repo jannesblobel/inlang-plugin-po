@@ -45,7 +45,7 @@ describe("plugin", async () => {
             type: "Message",
             pattern: {
               type: "Pattern",
-              elements: [{ type: "Text", value: ["Newly created message"] }],
+              elements: [{ type: "Text", value: "Newly created message" }],
             },
           },
         })
