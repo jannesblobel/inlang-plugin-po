@@ -51,7 +51,6 @@ describe("plugin", async () => {
           },
         })
         .unwrap();
-
       const updatedResources = [
         ...resources.filter(
           (resource) =>
@@ -59,21 +58,17 @@ describe("plugin", async () => {
         ),
         updatedReferenceResource,
       ];
-
       await config.writeResources({ config, resources: updatedResources });
 
-      const po = gettextParser.po.parse(
-        (await env.$fs.readFile(
-          `/example/${config.referenceLanguage}.po`,
-          "utf-8"
-        )) as string
+      const response = await config.readResources({ config });
+      //returnedElement is the newly written  test element
+      const returnedElement = response.find(
+        (resource) => resource.languageTag.language === "en"
       );
-      var output = gettextParser.po.compile(po);
-      console.log(output.toString("hex").replace(/(.)(.)/g, "$1$2 "));
-
-      expect(po.translations[""]["new-message"]).toBe([
-        "Newly created message",
-      ]);
+      expect(
+        returnedElement?.body[returnedElement.body.length - 1].pattern
+          .elements[0].value
+      ).toBe("Newly created message");
     });
   });
 });

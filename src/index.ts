@@ -47,10 +47,8 @@ export async function readResources(
     const po = gettextParser.po.parse(
       (await args.$fs.readFile(resourcePath, "utf-8")) as string
     );
-
     result.push(parseResource(po.translations[""], language));
   }
-
   return result;
 }
 
@@ -64,14 +62,13 @@ export async function writeResources(
   args: Parameters<Config["writeResources"]>[0] &
     EnvironmentFunctions & { pluginConfig: PluginConfig }
 ): ReturnType<Config["writeResources"]> {
+  console.log(args.resources, "wo sthet was");
   for (const resource of args.resources) {
     const resourcePath = args.pluginConfig.pathPattern.replace(
       "{language}",
       resource.languageTag.language
     );
-    // if (resource.body[2]) {
-    //   console.log(resource.body[2].pattern, "write");
-    // }
+
     await args.$fs.writeFile(resourcePath, serializeResource(resource));
   }
 }
@@ -82,16 +79,7 @@ export async function writeResources(
  * @example
  *  parseResource({ "test": "Hello world" }, "en")
  */
-function parseResource(
-  /** flat JSON refers to the flatten function from https://www.npmjs.com/package/flat */
-  //!!remove any @samuel objectstring[]
-  flatPo: any,
-  language: string
-): ast.Resource {
-  const res = Object.entries(flatPo)
-    .filter(([value]) => value !== "")
-    .map(([id, value]) => parseMessage(id, value));
-
+function parseResource(flatPo: any, language: string): ast.Resource {
   return {
     // metadata
     type: "Resource",
@@ -112,7 +100,6 @@ function parseResource(
  *  parseMessage("test", "Hello world")
  */
 function parseMessage(id: string, value: any): ast.Message {
-  // console.log(value.msgstr);
   return {
     type: "Message",
     id: {
@@ -141,14 +128,7 @@ function parseMessage(id: string, value: any): ast.Message {
  */
 function serializeResource(resource: ast.Resource): Buffer {
   const pol = Object.fromEntries(resource.body.map(serializeMessage));
-  // console.log(po, "bin ich richtg");
-  // console.log(JSON.stringify(po, null, 2));
-  // const msgid = Object.keys(po);
-  // for (const keys of Object.entries(po)) {
-  //   console.log(keys[1], "keys");
-  //   const msgid = keys[0];
-  //   const msgstr = keys[1];
-  // }
+
   const translations = new Map([["", pol]]);
   const res = Object.fromEntries(translations);
   const resp = new Map([["translations", res]]);
@@ -157,22 +137,23 @@ function serializeResource(resource: ast.Resource): Buffer {
     ["charset", "utf-8"],
     ["header", undefined],
   ]);
+  let po: any;
+  //  !! data is not working
+  // const data = [
+  //   (po.charset = "uft-8"),
+  //   (po.header = undefined),
+  //   (po.translations = res),
+  // ];
+  // console.log(data, "data");
+
   const result = Object.fromEntries(poFile);
   const hope = Object.assign(result, Object.fromEntries(resp));
   var output = gettextParser.po.compile(hope);
-  // console.log(output);
+
   // stringyify the object with beautification.
-  // console.log(po);
 
   return output;
 }
-
-// {
-
-//         msgid: 'ich bin english must contain two space-delimited values',
-//         comments: { reference: 'authentication.py:78' },
-//          msgstr: [ '' ]
-//        },
 
 /**
  * Serializes a message.
@@ -181,9 +162,6 @@ function serializeResource(resource: ast.Resource): Buffer {
  * does not support more than 1 element in a pattern.
  */
 function serializeMessage(message: ast.Message): [id: string, value: any] {
-  // console.log(result[0].body[0].pattern.elements[0].value, "result");
-  // console.log(message.pattern.elements[0], "ohne");
-  // const msgstr = message.pattern.elements[0].value;
   const poFile = new Map([
     ["msgid", message.id.name],
     ["comments", message.pattern.elements[0].metadata],
@@ -191,5 +169,4 @@ function serializeMessage(message: ast.Message): [id: string, value: any] {
   ]);
 
   return [message.id.name, Object.fromEntries(poFile)];
-  // return [message.id.name, message.pattern.elements[0].value];
 }
