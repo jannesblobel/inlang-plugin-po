@@ -44,10 +44,10 @@ export async function readResources(
       language
     );
     // reading the po
-    const po = gettextParser.po.parse(
+    const poFile = gettextParser.po.parse(
       (await args.$fs.readFile(resourcePath, "utf-8")) as string
     );
-    result.push(parseResource(po.translations[""], language));
+    result.push(parseResource(poFile, language));
   }
   return result;
 }
@@ -67,8 +67,10 @@ export async function writeResources(
       "{language}",
       resource.languageTag.name
     );
-
-    await args.$fs.writeFile(resourcePath, serializeResource(resource));
+    const poFile = serializeResource(resource);
+    // console.log(poFile);
+    // const text = gettextParser.po.compile(poFile);
+    // await args.$fs.writeFile(resourcePath, text, { encoding: "utf-8" });
   }
 }
 
@@ -78,17 +80,23 @@ export async function writeResources(
  * @example
  *  parseResource({ "test": "Hello world" }, "en")
  */
-function parseResource(flatPo: any, language: string): ast.Resource {
+function parseResource(
+  poFile: gettextParser.GetTextTranslations,
+  language: string
+): ast.Resource {
   return {
-    // metadata
+    metadata: {
+      headers: poFile.headers,
+      charset: poFile.charset,
+    },
     type: "Resource",
     languageTag: {
       type: "LanguageTag",
       name: language,
     },
-    body: Object.entries(flatPo)
-      .filter(([value]) => value !== "")
-      .map(([id, value]) => parseMessage(id, value)),
+    body: Object.values(poFile.translations[""])
+      .filter((translation) => translation.msgid !== "")
+      .map((translation) => parseMessage(translation)),
   };
 }
 
@@ -98,19 +106,21 @@ function parseResource(flatPo: any, language: string): ast.Resource {
  * @example
  *  parseMessage("test", "Hello world")
  */
-function parseMessage(id: string, value: any): ast.Message {
+function parseMessage(
+  translation: gettextParser.GetTextTranslation
+): ast.Message {
   return {
     type: "Message",
+    metadata: {
+      comments: translation.comments,
+    },
     id: {
       type: "Identifier",
-      name: id,
+      name: translation.msgid,
     },
-
     pattern: {
       type: "Pattern",
-      elements: [
-        { type: "Text", value: value.msgstr[0], metadata: value.comments },
-      ],
+      elements: [{ type: "Text", value: translation.msgstr[0] }],
     },
   };
 }
@@ -125,33 +135,22 @@ function parseMessage(id: string, value: any): ast.Message {
  * @example
  *  serializeResource(resource)
  */
-function serializeResource(resource: ast.Resource): Buffer {
-  const pol = Object.fromEntries(resource.body.map(serializeMessage));
-
-  const translations = new Map([["", pol]]);
-  const res = Object.fromEntries(translations);
-  const resp = new Map([["translations", res]]);
-
-  const poFile = new Map([
-    ["charset", "utf-8"],
-    ["header", undefined],
-  ]);
-  let po: any;
-  //  !! data is not working
-  // const data = [
-  //   (po.charset = "uft-8"),
-  //   (po.header = undefined),
-  //   (po.translations = res),
-  // ];
-  // console.log(data, "data");
-
-  const result = Object.fromEntries(poFile);
-  const hope = Object.assign(result, Object.fromEntries(resp));
-  var output = gettextParser.po.compile(hope);
-
-  // stringyify the object with beautification.
-
-  return output;
+function serializeResource(
+  resource: ast.Resource
+): gettextParser.GetTextTranslations {
+  return {
+    headers: (resource.metadata as any)
+      .headers as gettextParser.GetTextTranslations["headers"],
+    charset: (resource.metadata as any)
+      .charset as gettextParser.GetTextTranslations["charset"],
+    translations: {
+      "": Object.fromEntries(
+        resource.body.map((message) => {
+          return [message.id.name, serializeMessage(message)];
+        })
+      ),
+    },
+  };
 }
 
 /**
@@ -160,12 +159,12 @@ function serializeResource(resource: ast.Resource): Buffer {
  * Note that only the first element of the pattern is used as inlang, as of v0.3,
  * does not support more than 1 element in a pattern.
  */
-function serializeMessage(message: ast.Message): [id: string, value: any] {
-  const poFile = new Map([
-    ["msgid", message.id.name],
-    ["comments", message.pattern.elements[0].metadata],
-    ["msgstr", [message.pattern.elements[0].value]],
-  ]);
-
-  return [message.id.name, Object.fromEntries(poFile)];
+function serializeMessage(
+  message: ast.Message
+): gettextParser.GetTextTranslation {
+  return {
+    comments: (message.metadata as any)?.comments,
+    msgid: message.id.name,
+    msgstr: [message.pattern.elements[0].value],
+  };
 }

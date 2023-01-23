@@ -10,7 +10,7 @@ import {
 import { query } from "@inlang/core/query";
 
 const env = await initializeTestEnvironment();
-const config = (await defineConfig(env)) as Config;
+const config: Config = await defineConfig(env);
 
 describe("plugin", async () => {
   const resources = await config.readResources({ config });
@@ -51,22 +51,24 @@ describe("plugin", async () => {
         .unwrap();
       const updatedResources = [
         ...resources.filter(
-          (resource) =>
-            resource.languageTag.language !== config.referenceLanguage
+          (resource) => resource.languageTag.name !== config.referenceLanguage
         ),
         updatedReferenceResource,
       ];
       await config.writeResources({ config, resources: updatedResources });
 
       const response = await config.readResources({ config });
-      //returnedElement is the newly written  test element
-      const returnedElement = response.find(
-        (resource) => resource.languageTag.language === "en"
+
+      console.log(response);
+
+      const testResource = response.find(
+        (resource) => resource.languageTag.name === "en"
       );
-      expect(
-        returnedElement?.body[returnedElement.body.length - 1].pattern
-          .elements[0].value
-      ).toBe("Newly created message");
+      if (testResource === undefined) {
+        throw Error("reference resource not found");
+      }
+      const message = query(referenceResource).get({ id: "new-message" });
+      expect(message?.pattern.elements[0].value).toBe("Newly created message");
     });
   });
 });
