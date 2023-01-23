@@ -3,8 +3,6 @@ import type * as ast from "@inlang/core/ast";
 import gettextParser from "gettext-parser";
 import process from "process";
 globalThis.process = process;
-const NODE_ENV = process.env.NODE_ENV;
-
 /**
  * The plugin configuration.
  */
