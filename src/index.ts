@@ -1,7 +1,8 @@
 import type { Config, EnvironmentFunctions } from "@inlang/core/config";
 import type * as ast from "@inlang/core/ast";
 import gettextParser from "gettext-parser";
-
+import process from "process";
+globalThis.process = process;
 /**
  * The plugin configuration.
  */
