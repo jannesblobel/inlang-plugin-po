@@ -22,12 +22,3 @@ msgstr " 0.4 oder neuer"
 msgid "%s level expected"
 msgstr "%s Level erwartet"
 
-msgid "test"
-msgstr "This message is used for testing purposes."
-
-msgid ""
-"Internal runtime error. Try resetting the MMU unit or updating the "
-"firmware. If the issue persists, contact support."
-msgstr ""
-"Intern runtime feil. Prøv omstart av MMU enheten eller oppdater fastvaren. "
-"Hvis feilen vedvarer, kontakt kundestøtte."
