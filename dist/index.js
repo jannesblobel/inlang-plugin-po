@@ -14258,19 +14258,19 @@ var import_gettext_parser = __toESM(require_gettext_parser(), 1);
 async function readResources(args) {
   const result = [];
   for (const language of args.config.languages) {
-    let resourcePath;
-    if (language === args.config.referenceLanguage) {
-      resourcePath = args.pluginConfig.pathPattern.replace("{language}", language) + "t";
-    } else {
-      const resourcePath2 = args.pluginConfig.pathPattern.replace(
+    let response;
+    try {
+      const resourcePath = args.pluginConfig.pathPattern.replace("{language}", language) + "t";
+      response = await args.$fs.readFile(resourcePath, "utf-8");
+    } catch (error) {
+      const resourcePath = args.pluginConfig.pathPattern.replace(
         "{language}",
         language
       );
-      const poFile = import_gettext_parser.default.po.parse(
-        await args.$fs.readFile(resourcePath2, "utf-8")
-      );
-      result.push(parseResource(poFile, language));
+      response = await args.$fs.readFile(resourcePath, "utf-8");
     }
+    const poFile = import_gettext_parser.default.po.parse(response);
+    result.push(parseResource(poFile, language));
   }
   return result;
 }
