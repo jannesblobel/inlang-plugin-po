@@ -55,16 +55,16 @@ export async function readResources(
         );
       }
     } else {
-      resourcePath = args.pluginConfig.pathPattern.replace(
+      const resourcePath = args.pluginConfig.pathPattern.replace(
         "{language}",
         language
       );
+      const poFile = gettextParser.po.parse(
+        (await args.$fs.readFile(resourcePath, "utf-8")) as string
+      );
+      result.push(parseResource(poFile, language));
     }
     // reading the po
-    const poFile = gettextParser.po.parse(
-      (await args.$fs.readFile(resourcePath, "utf-8")) as string
-    );
-    result.push(parseResource(poFile, language));
   }
   return result;
 }
