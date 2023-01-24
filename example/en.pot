@@ -33,3 +33,12 @@ msgstr " "
 #: ../../Firmware/ultralcd.cpp:7017
 msgid "%s level expected"
 msgstr ""
+
+#. MSG_DESC_FW_RUNTIME_ERROR c=20 r=11
+#: ../../Firmware/mmu2/errors_list.h:242 ../../Firmware/mmu2/errors_list.h:283
+msgid ""
+"Internal runtime error. Try resetting the MMU unit or updating the firmware. "
+"If the issue persists, contact support."
+msgstr ""
+"Intern runtime feil. Prøv omstart av MMU enheten eller oppdater fastvaren. "
+"Hvis feilen vedvarer, kontakt kundestøtte."
