@@ -33,3 +33,8 @@ msgstr " 0.4 oder neuer"
 #: ../../Firmware/ultralcd.cpp:7017
 msgid "%s level expected"
 msgstr "%s Level erwartet"
+
+#. MSG_SELFTEST_FS_LEVEL c=20
+#: ../../Firmware/ultralcd.cpp:7017
+msgid "test"
+msgstr "This message is used for testing purposes."

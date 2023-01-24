@@ -1,5 +1,5 @@
 import { defineConfig } from "../inlang.config.js";
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, test } from "vitest";
 import nodeFs from "node:fs";
 import { fs as memfs } from "memfs";
 import {
@@ -15,7 +15,8 @@ const config: Config = await defineConfig(env);
 describe("plugin", async () => {
   const resources = await config.readResources({ config });
   const referenceResource = resources.find(
-    (resource) => resource.languageTag.name === config.referenceLanguage
+    // the pot file is a template and cannot be rewritten or had an msgstr therefore we use "de"
+    (resource) => resource.languageTag.name === "de"
   )!;
 
   describe("readResources()", async () => {
@@ -56,24 +57,24 @@ describe("plugin", async () => {
         ),
         updatedReferenceResource,
       ];
-      const res = await config.writeResources({
+      await config.writeResources({
         config,
         resources: updatedResources,
       });
 
       const response = await config.readResources({ config });
-      console.log(response);
       const testResource = response.find(
-        (resource) => resource.languageTag.name === "en"
+        (resource) => resource.languageTag.name === "de"
       );
       if (testResource === undefined) {
         throw Error("reference resource not found");
       }
+      // cant use query at this point assumption: query(referenceResource)  run only only once and have not noticed the changes
+      const message = query(referenceResource).includedMessageIds();
 
-      const message = query(referenceResource).get({ id: "new-message" });
       // const message = query(referenceResource).get({ id: "test" });
 
-      console.log(message, "message");
+      // console.log(message, "message");
       expect(message?.pattern.elements[0].value).toBe("Newly created message");
     });
   });
