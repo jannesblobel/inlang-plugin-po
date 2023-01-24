@@ -14260,16 +14260,7 @@ async function readResources(args) {
   for (const language of args.config.languages) {
     let resourcePath;
     if (language === args.config.referenceLanguage) {
-      try {
-        resourcePath = args.pluginConfig.pathPattern.replace("{language}", language) + "t";
-        await args.$fs.readFile(resourcePath, "utf-8");
-      } catch (error) {
-        console.log(error, "no .pot file found");
-        resourcePath = args.pluginConfig.pathPattern.replace(
-          "{language}",
-          language
-        );
-      }
+      resourcePath = args.pluginConfig.pathPattern.replace("{language}", language) + "t";
     } else {
       const resourcePath2 = args.pluginConfig.pathPattern.replace(
         "{language}",
