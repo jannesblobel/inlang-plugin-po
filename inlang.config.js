@@ -11,6 +11,14 @@ export async function defineConfig(env) {
   };
 
   return {
+// if your project use a pot file use the pot as the reference Language 
+// !! do not add the pot file in the Languages array 
+/**
+ * @example
+ * example files: en.pot, de.po, es.po, fr.po
+ *  referenceLanguage: "en",
+    languages: ["de","es","fr"],
+ */
     referenceLanguage: "en",
     languages: ["en", "de","es","fr"],
     readResources: (args) =>
