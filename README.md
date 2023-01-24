@@ -1,31 +1,46 @@
-# inlang plugin-template
+# inlang-plugin-po
 
-> **Note**  
-> 
-> **Change the following things if you use this template:**
-> 1. Name your repository "inlang-plugin-{name}".
-> 2. Change the introduction paragraph to describe your plugin.
-> 3. Create a release on GitHub so users can import a specific version of your plugin.
-> 4. Update the Usage section.
-> 5. Open a PR to https://github.com/inlang/awesome-inlang
+This plugin reads and writes resources that are stored as .po file. The following features are supported:
 
-This is a template for creating a new plugin for [inlang](https://inlang.com).
+- [x] ID (`"msgid": "id"`)
+- [x] messages (`"msgstr": "value"`)
 
-Plugins allow the customization of inlang's behavior by, for example, defining how resources should be parsed and serialized. Read more about using plugins on the [documentation site](https://inlang.com/documentation/plugins). This template has been set up to provide out of the box:
 
-- [x] TypeScript
-- [x] Testing (the example)
-- [x] Bundling
+
+
+
 
 ## Usage
 
 ```js
-// filename: inlang.config.js
+/**
+ * @type {import("@inlang/core/config").DefineConfig}
+ */
+export async function defineConfig(env) {
+  // importing plugin from local file for testing purposes
+  const plugin = await env.$import("../dist/index.js");
 
-export async function initializeConfig(env){
-  const plugin = await env.$import(
-    "https://cdn.jsdelivr.net/gh/{username}/{repository-name}@{version}/dist/index.js"
-  ) 
+  const pluginConfig = {
+    // language mean the name of you file
+    pathPattern: "./example/{language}.po",
+  };
+
+  return {
+// if your project use a pot file use the pot as the reference Language 
+// !! do not add the pot file in the Languages array 
+/**
+ * @example
+ * example files: en.pot, de.po, es.po, fr.po
+ *  referenceLanguage: "en",
+    languages: ["de","es","fr"],
+ */
+    referenceLanguage: "en",
+    languages: ["de","es","fr"],
+    readResources: (args) =>
+      plugin.readResources({ ...args, ...env, pluginConfig }),
+    writeResources: (args) =>
+      plugin.writeResources({ ...args, ...env, pluginConfig }),
+  };
 }
 ```
 
