@@ -41,10 +41,19 @@ export async function readResources(
   for (const language of args.config.languages) {
     // filter the referenceLanguage out of all languages,
     // because the referencelanguage is an .pot file not a .po file
-    let resourcePath: string;
+    let resourcePath;
     if (language === args.config.referenceLanguage) {
-      resourcePath =
-        args.pluginConfig.pathPattern.replace("{language}", language) + "t";
+      try {
+        resourcePath =
+          args.pluginConfig.pathPattern.replace("{language}", language) + "t";
+        await args.$fs.readFile(resourcePath, "utf-8");
+      } catch (error) {
+        console.log(error, "no .pot file found");
+        resourcePath = args.pluginConfig.pathPattern.replace(
+          "{language}",
+          language
+        );
+      }
     } else {
       const resourcePath = args.pluginConfig.pathPattern.replace(
         "{language}",
@@ -57,7 +66,6 @@ export async function readResources(
     }
     // reading the po
   }
-  console.log(result[0].metadata);
   return result;
 }
 
