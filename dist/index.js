@@ -14262,6 +14262,7 @@ async function readResources(args) {
     let response;
     try {
       const resourcePath = args.pluginConfig.pathPattern.replace("{language}", language) + "t";
+      console.log(resourcePath, "resourcePath");
       response = await args.$fs.readFile(resourcePath, "utf-8");
       console.log(response, "respoonse try");
     } catch (error) {
