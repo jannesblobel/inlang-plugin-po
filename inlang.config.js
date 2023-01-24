@@ -7,12 +7,11 @@ export async function defineConfig(env) {
 
   const pluginConfig = {
     // language mean the name of you file
-    pathPattern: "./example/{language}.po",
+    pathPattern: "./rest_framework_simplejwt/locale/fr/LC_MESSAGES/django.po",
   };
-
   return {
-    referenceLanguage: "en",
-    languages: ["en", "de"],
+    referenceLanguage: "fr",
+    languages: ["fr", "de","cs","ro"],
     readResources: (args) =>
       plugin.readResources({ ...args, ...env, pluginConfig }),
     writeResources: (args) =>

@@ -46,6 +46,7 @@ export async function readResources(
       try {
         const resourcePath =
           args.pluginConfig.pathPattern.replace("{language}", language) + "t";
+        console.log(resourcePath, "try");
         const poFile = await gettextParser.po.parse(
           (await args.$fs.readFile(resourcePath, "utf-8")) as string
         );
@@ -55,10 +56,13 @@ export async function readResources(
       } catch (error) {
         console.log("no .pot file found");
         console.log(error);
+
         const resourcePath = args.pluginConfig.pathPattern.replace(
           "{language}",
           language
         );
+        console.log(resourcePath);
+
         const poFile = gettextParser.po.parse(
           (await args.$fs.readFile(resourcePath, "utf-8")) as string
         );
