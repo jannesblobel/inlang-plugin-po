@@ -14258,7 +14258,7 @@ var import_gettext_parser = __toESM(require_gettext_parser(), 1);
 async function readResources(args) {
   const result = [];
   for (const language of args.config.languages) {
-    console.log();
+    console.log("bin ich live?");
     let response;
     try {
       const resourcePath = args.pluginConfig.pathPattern.replace("{language}", language) + "t";

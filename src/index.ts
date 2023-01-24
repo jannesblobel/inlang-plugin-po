@@ -41,7 +41,7 @@ export async function readResources(
   for (const language of args.config.languages) {
     // filter the referenceLanguage out of all languages,
     // because the referencelanguage is an .pot file not a .po file
-    console.log();
+    console.log("bin ich live?");
     let response;
     try {
       const resourcePath =
