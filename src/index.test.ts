@@ -16,7 +16,7 @@ describe("plugin", async () => {
   const resources = await config.readResources({ config });
   const referenceResource = resources.find(
     // the pot file is a template and cannot be rewritten or had an msgstr therefore we use "de"
-    (resource) => resource.languageTag.name === "en"
+    (resource) => resource.languageTag.name === "de"
   )!;
 
   describe("readResources()", async () => {
