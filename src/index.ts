@@ -47,7 +47,7 @@ export async function readResources(
         resourcePath =
           args.pluginConfig.pathPattern.replace("{language}", language) + "t";
       } catch (error) {
-        console.log(error);
+        console.log("no .pot file found", error);
       } finally {
         resourcePath = args.pluginConfig.pathPattern.replace(
           "{language}",
