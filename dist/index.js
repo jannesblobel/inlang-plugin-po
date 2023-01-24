@@ -14258,11 +14258,14 @@ var import_gettext_parser = __toESM(require_gettext_parser(), 1);
 async function readResources(args) {
   const result = [];
   for (const language of args.config.languages) {
+    console.log();
     let response;
     try {
       const resourcePath = args.pluginConfig.pathPattern.replace("{language}", language) + "t";
       response = await args.$fs.readFile(resourcePath, "utf-8");
+      console.log(response, "respoonse try");
     } catch (error) {
+      console.log(error, "file not found");
       const resourcePath = args.pluginConfig.pathPattern.replace(
         "{language}",
         language
