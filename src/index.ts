@@ -32,23 +32,32 @@ export async function readResources(
     }
 ): ReturnType<Config["readResources"]> {
   const result: ast.Resource[] = [];
-  // filter the referenceLanguage out of all languages,
-  // because the referencelanguage is an .pot file not a .po file
-  // !! for (const language of args.config.languages.filter(
+
+  // !!
+  // for (const language of args.config.languages.filter(
   // (value) => value !== args.config.referenceLanguage
   // ))
 
   for (const language of args.config.languages) {
-    const resourcePath = args.pluginConfig.pathPattern.replace(
-      "{language}",
-      language
-    );
+    // filter the referenceLanguage out of all languages,
+    // because the referencelanguage is an .pot file not a .po file
+    let resourcePath: string;
+    if (language === args.config.referenceLanguage) {
+      resourcePath =
+        args.pluginConfig.pathPattern.replace("{language}", language) + "t";
+    } else {
+      resourcePath = args.pluginConfig.pathPattern.replace(
+        "{language}",
+        language
+      );
+    }
     // reading the po
     const poFile = gettextParser.po.parse(
       (await args.$fs.readFile(resourcePath, "utf-8")) as string
     );
     result.push(parseResource(poFile, language));
   }
+  console.log(result[0].metadata);
   return result;
 }
 
