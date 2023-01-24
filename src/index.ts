@@ -41,23 +41,22 @@ export async function readResources(
   for (const language of args.config.languages) {
     // filter the referenceLanguage out of all languages,
     // because the referencelanguage is an .pot file not a .po file
-    let resourcePath: string;
+    let resourcePath;
     if (language === args.config.referenceLanguage) {
       resourcePath =
         args.pluginConfig.pathPattern.replace("{language}", language) + "t";
     } else {
-      resourcePath = args.pluginConfig.pathPattern.replace(
+      const resourcePath = args.pluginConfig.pathPattern.replace(
         "{language}",
         language
       );
+      const poFile = gettextParser.po.parse(
+        (await args.$fs.readFile(resourcePath, "utf-8")) as string
+      );
+      result.push(parseResource(poFile, language));
     }
     // reading the po
-    const poFile = gettextParser.po.parse(
-      (await args.$fs.readFile(resourcePath, "utf-8")) as string
-    );
-    result.push(parseResource(poFile, language));
   }
-  console.log(result[0].metadata);
   return result;
 }
 

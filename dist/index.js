@@ -14262,17 +14262,16 @@ async function readResources(args) {
     if (language === args.config.referenceLanguage) {
       resourcePath = args.pluginConfig.pathPattern.replace("{language}", language) + "t";
     } else {
-      resourcePath = args.pluginConfig.pathPattern.replace(
+      const resourcePath2 = args.pluginConfig.pathPattern.replace(
         "{language}",
         language
       );
+      const poFile = import_gettext_parser.default.po.parse(
+        await args.$fs.readFile(resourcePath2, "utf-8")
+      );
+      result.push(parseResource(poFile, language));
     }
-    const poFile = import_gettext_parser.default.po.parse(
-      await args.$fs.readFile(resourcePath, "utf-8")
-    );
-    result.push(parseResource(poFile, language));
   }
-  console.log(result[0].metadata);
   return result;
 }
 async function writeResources(args) {
