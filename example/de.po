@@ -14,7 +14,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
 msgid " 0.3 or older"
-msgstr " 0.3 oder älter"
+msgstr " 0.3 oder älter oder doch nicht "
 
 msgid " 0.4 or newer"
 msgstr " 0.4 oder neuer"
