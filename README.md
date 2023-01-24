@@ -5,7 +5,8 @@ This plugin reads and writes resources that are stored as .po file. The followin
 - [x] ID (`"msgid": "id"`)
 - [x] messages (`"msgstr": "value"`)
 
-
+#### Recommendation for now:
+Use a .pot file in your project. It is easier to manage the ids in a file instead of in the code
 
 
 
