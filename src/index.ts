@@ -41,16 +41,12 @@ export async function readResources(
   for (const language of args.config.languages) {
     // filter the referenceLanguage out of all languages,
     // because the referencelanguage is an .pot file not a .po file
-    console.log("bin ich live?");
     let response;
     try {
       const resourcePath =
         args.pluginConfig.pathPattern.replace("{language}", language) + "t";
-      console.log(resourcePath, "resourcePath");
       response = (await args.$fs.readFile(resourcePath, "utf-8")) as string;
-      console.log(response, "respoonse try");
     } catch (error) {
-      console.log(error, "file not found");
       const resourcePath = args.pluginConfig.pathPattern.replace(
         "{language}",
         language
