@@ -13,6 +13,12 @@ Use a .pot file in your project. It is easier to manage the ids in a file instea
 
 ## Usage
 
+1. Create a new file named `inlang.config.js` in the root of your git repository.
+2. Copy/paste the following code into the config
+3. Adapt the referenceLanguage, languages and pathPattern (your saved translation files)
+
+ If you need more help read the [inlang documentation](https://inlang.com/documentation/getting-started)
+
 ```js
 /**
  * @type {import("@inlang/core/config").DefineConfig}
