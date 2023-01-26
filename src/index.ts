@@ -85,6 +85,7 @@ export async function readResources(
     };
     resources.push(parseResource(potFile, args.config.referenceLanguage));
   }
+
   return resources;
 }
 
@@ -206,7 +207,7 @@ function serializeMessage(
   message: ast.Message
 ): gettextParser.GetTextTranslation {
   return {
-    comments: message.metadata as gettextParser.GetTextComment,
+    comments: message.metadata?.comments as gettextParser.GetTextComment,
     msgid: message.id.name,
     msgstr: [message.pattern.elements[0].value],
   };
