@@ -20,7 +20,7 @@ export async function defineConfig(env) {
  *  referenceLanguage: "en",
     languages: ["de","es","fr"],
  */
-    referenceLanguage: "de",
+    referenceLanguage: "en",
     languages: ["de", "es", "fr"],
     readResources: (args) =>
       plugin.readResources({ ...args, ...env, pluginConfig }),
