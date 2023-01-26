@@ -21,3 +21,6 @@ msgstr " 0.4 ou +recent"
 
 msgid "%s level expected"
 msgstr "niveau %s attendu"
+
+msgid "i guess it works"
+msgstr "Je suppose que ça marche"
