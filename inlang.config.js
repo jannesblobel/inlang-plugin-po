@@ -19,8 +19,8 @@ export async function defineConfig(env) {
  *  referenceLanguage: "en",
     languages: ["de","es","fr"],
  */
-    referenceLanguage: "auto",
-    languages: ["en", "de", "es", "fr"],
+    referenceLanguage: "en",
+    languages: ["de", "es", "fr"],
     readResources: (args) =>
       plugin.readResources({ ...args, ...env, pluginConfig }),
     writeResources: (args) =>

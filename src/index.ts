@@ -33,14 +33,9 @@ export async function readResources(
 ): ReturnType<Config["readResources"]> {
   const result: ast.Resource[] = [];
 
-  // !!
-  // for (const language of args.config.languages.filter(
-  // (value) => value !== args.config.referenceLanguage
-  // ))
-  // !! de=== no ref available
   if (args.config.referenceLanguage === "auto") {
     const translationIds: string[][] = [[""]];
-    let testObject = {};
+    const testObject = {};
     for (const language of args.config.languages) {
       const resourcePath = args.pluginConfig.pathPattern.replace(
         "{language}",

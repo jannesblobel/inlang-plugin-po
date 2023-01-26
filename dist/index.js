@@ -14259,7 +14259,7 @@ async function readResources(args) {
   const result = [];
   if (args.config.referenceLanguage === "auto") {
     const translationIds = [[""]];
-    let testObject = {};
+    const testObject = {};
     for (const language of args.config.languages) {
       const resourcePath = args.pluginConfig.pathPattern.replace(
         "{language}",
