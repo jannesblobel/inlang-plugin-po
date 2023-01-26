@@ -1,6 +1,6 @@
 import type { Config, EnvironmentFunctions } from "@inlang/core/config";
 import type * as ast from "@inlang/core/ast";
-import gettextParser from "gettext-parser";
+import gettextParser, { GetTextTranslation } from "gettext-parser";
 
 /**
  * The plugin configuration.
@@ -37,7 +37,45 @@ export async function readResources(
   // for (const language of args.config.languages.filter(
   // (value) => value !== args.config.referenceLanguage
   // ))
+  // !! de=== no ref available
+  if (args.config.referenceLanguage === "auto") {
+    const translationIds: string[][] = [[""]];
+    let testObject = {};
+    for (const language of args.config.languages) {
+      const resourcePath = args.pluginConfig.pathPattern.replace(
+        "{language}",
+        language
+      );
+      const poFile = gettextParser.po.parse(
+        (await args.$fs.readFile(resourcePath, "utf-8")) as string
+      );
+      translationIds.push(
+        // console.log(
+        Object.keys(poFile.translations[""]).filter(
+          (translation) => translation[0] !== ""
+        )
+      );
+    }
+    // !!Runs twice in the test.index file that's why  we get two console.log(keys)
+    const keys = [
+      ...new Set(
+        translationIds.flatMap((value) => value).filter((value) => value !== "")
+      ),
+    ];
 
+    for (const key of keys) {
+      Object.assign(testObject, { [key]: { msgid: key, msgstr: [" "] } });
+    }
+
+    const potFile: gettextParser.GetTextTranslations = {
+      headers: { header: "" },
+      charset: "uft-8",
+      translations: { [""]: testObject },
+    };
+    result.push(parseResource(potFile, "auto"));
+
+    console.log(potFile, "testob");
+  }
   for (const language of args.config.languages) {
     // filter the referenceLanguage out of all languages,
     // because the referencelanguage is an .pot file not a .po file
@@ -53,6 +91,7 @@ export async function readResources(
       );
       response = (await args.$fs.readFile(resourcePath, "utf-8")) as string;
     }
+
     // if (language === args.config.referenceLanguage) {
     //   // resourcePath =
     //   //   args.pluginConfig.pathPattern.replace("{language}", language) + "t";
@@ -63,11 +102,45 @@ export async function readResources(
     //   );}
     const poFile = gettextParser.po.parse(response);
     result.push(parseResource(poFile, language));
-
+    // console.log(poFile.translations[""], "po");
     // reading the po
   }
+  console.log(result);
   return result;
 }
+
+// {
+//   [1]   '': {
+//   [1]     msgid: '',
+//   [1]     msgstr: [
+//   [1]       'Project-Id-Version: Prusa-Firmware\n' +
+//   [1]         'POT-Creation-Date: Wed 16 Mar 2022 09:24:45 AM CET\n' +
+//   [1]         'PO-Revision-Date: Wed 16 Mar 2022 09:24:45 AM CET\n' +
+//   [1]         'Last-Translator: \n' +
+//   [1]         'Language-Team: \n' +
+//   [1]         'Language: es\n' +
+//   [1]         'MIME-Version: 1.0\n' +
+//   [1]         'Content-Type: text/plain; charset=utf-8\n' +
+//   [1]         'Content-Transfer-Encoding: 8bit\n' +
+//   [1]         'X-Generator: Poedit 2.0.7\n' +
+//   [1]         'X-Poedit-SourceCharset: UTF-8\n' +
+//   [1]         'Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n'
+//   [1]     ]
+//   [1]   },
+//   [1]   ' 0.3 or older': { msgid: ' 0.3 or older', msgstr: [ ' 0.3 o mayor' ] },
+//   [1]   ' 0.4 or newer': { msgid: ' 0.4 or newer', msgstr: [ ' 0.4 o mas nueva' ] },
+//   [1]   '%s level expected': { msgid: '%s level expected', msgstr: [ '%s nivel esperado' ] }
+//   [1] } po
+
+// [
+//   [1]   { ' 0.3 or older': { msgid: ' 0.3 or older', msgstr: [Array] } },
+//   [1]   { ' 0.4 or newer': { msgid: ' 0.4 or newer', msgstr: [Array] } },
+//   [1]   {
+//   [1]     '%s level expected': { msgid: '%s level expected', msgstr: [Array] }
+//   [1]   },
+//   [1]   { test: { msgid: 'test', msgstr: [Array] } },
+//   [1]   { 'new-message': { msgid: 'new-message', msgstr: [Array] } }
+//   [1] ] testob
 
 /**
  * Writing resources.

@@ -14257,16 +14257,45 @@ var require_gettext_parser = __commonJS({
 var import_gettext_parser = __toESM(require_gettext_parser(), 1);
 async function readResources(args) {
   const result = [];
+  if (args.config.referenceLanguage === "auto") {
+    const translationIds = [[""]];
+    let testObject = {};
+    for (const language of args.config.languages) {
+      const resourcePath = args.pluginConfig.pathPattern.replace(
+        "{language}",
+        language
+      );
+      const poFile = import_gettext_parser.default.po.parse(
+        await args.$fs.readFile(resourcePath, "utf-8")
+      );
+      translationIds.push(
+        Object.keys(poFile.translations[""]).filter(
+          (translation) => translation[0] !== ""
+        )
+      );
+    }
+    const keys2 = [
+      ...new Set(
+        translationIds.flatMap((value) => value).filter((value) => value !== "")
+      )
+    ];
+    for (const key of keys2) {
+      Object.assign(testObject, { [key]: { msgid: key, msgstr: [" "] } });
+    }
+    const potFile = {
+      headers: { header: "" },
+      charset: "uft-8",
+      translations: { [""]: testObject }
+    };
+    result.push(parseResource(potFile, "auto"));
+    console.log(potFile, "testob");
+  }
   for (const language of args.config.languages) {
-    console.log("bin ich live?");
     let response;
     try {
       const resourcePath = args.pluginConfig.pathPattern.replace("{language}", language) + "t";
-      console.log(resourcePath, "resourcePath");
       response = await args.$fs.readFile(resourcePath, "utf-8");
-      console.log(response, "respoonse try");
     } catch (error) {
-      console.log(error, "file not found");
       const resourcePath = args.pluginConfig.pathPattern.replace(
         "{language}",
         language
@@ -14276,6 +14305,7 @@ async function readResources(args) {
     const poFile = import_gettext_parser.default.po.parse(response);
     result.push(parseResource(poFile, language));
   }
+  console.log(result);
   return result;
 }
 async function writeResources(args) {
