@@ -34,6 +34,8 @@ export async function readResources(
     }
 ): ReturnType<Config["readResources"]> {
   const resources: ast.Resource[] = [];
+
+  // filter the reflanguage, because i could be, that is a pot file instead of a po
   for (const language of args.config.languages.filter(
     (lang) => lang !== args.config.referenceLanguage
   )) {
