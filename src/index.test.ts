@@ -67,16 +67,28 @@ describe("plugin", async () => {
         (resource) => resource.languageTag.name === "de"
       );
       if (testResource === undefined) {
-        throw Error("reference resource not found");
+        throw Error("Test resource not found");
       }
       // cant use query at this point assumption: query(referenceResource)  run only only once and have not noticed the changes
-      const message = query(referenceResource).includedMessageIds();
+      const message = query(testResource).get({ id: "new-message" });
 
       // const message = query(referenceResource).get({ id: "test" });
 
-      // console.log(message, "message");
       expect(message?.pattern.elements[0].value).toBe("Newly created message");
     });
+  });
+  it("should be comments in Metadata", async () => {
+    const response = await config.readResources({ config });
+    const testResource = response.find(
+      (resource) => resource.languageTag.name === "de"
+    );
+    if (testResource === undefined) {
+      throw Error("test resource not found");
+    }
+    // cant use query at this point assumption: query(referenceResource)  run only only once and have not noticed the changes
+    const message = query(testResource).get({ id: "test" });
+    console.log(message, "message");
+    expect(message?.metadata.comments.extracted).toBe("test comment");
   });
 });
 

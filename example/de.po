@@ -13,17 +13,15 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
+
+#. MSG_IR_03_OR_OLDER c=18
+#: ../../Firmware/Filament_sensor.cpp:289
+#: ../../Firmware/Filament_sensor.cpp:366 ../../Firmware/messages.cpp:165
 msgid " 0.3 or older"
 msgstr " 0.3 oder älter"
 
-msgid " 0.4 or newer"
-msgstr " 0.4 oder neuer werden die immernoch gelöscht"
 
-msgid "%s level expected"
-msgstr "%s Level erwartet"
-
+#. test comment
 msgid "test"
 msgstr "This message is used for testing purposes."
 
-msgid "i guess it works"
-msgstr "ich glaub es funktioniert"
