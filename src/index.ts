@@ -69,7 +69,15 @@ export async function readResources(
       charset: "",
       translations: {
         [""]: Object.fromEntries(
-          ids.map((id) => [id, { msgid: id, msgstr: [""] }])
+          ids.map((id) => [
+            id,
+            {
+              msgid: id,
+              msgstr: [
+                "NOT MODIFIABLE. see readme of  https://github.com/jannesblobel/inlang-plugin-po",
+              ],
+            },
+          ])
         ),
       },
     };
