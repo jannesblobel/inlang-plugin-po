@@ -13,20 +13,12 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#. MSG_IR_03_OR_OLDER c=18
-#: ../../Firmware/Filament_sensor.cpp:289
-#: ../../Firmware/Filament_sensor.cpp:366 ../../Firmware/messages.cpp:165
 msgid " 0.3 or older"
 msgstr " 0.3 oder älter"
 
-#. MSG_IR_04_OR_NEWER c=18
-#: ../../Firmware/Filament_sensor.cpp:291
-#: ../../Firmware/Filament_sensor.cpp:369 ../../Firmware/messages.cpp:164
 msgid " 0.4 or newer"
-msgstr " 0.4 oder neuer"
+msgstr " 0.4 oder neuer werden die immernoch gelöscht"
 
-#. MSG_SELFTEST_FS_LEVEL c=20
-#: ../../Firmware/ultralcd.cpp:7017
 msgid "%s level expected"
 msgstr "%s Level erwartet"
 
