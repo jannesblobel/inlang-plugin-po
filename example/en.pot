@@ -24,3 +24,6 @@ msgstr ""
 
 msgid "test"
 msgstr "This message is used for testing purposes."
+
+msgid "deleteme"
+msgstr ""
