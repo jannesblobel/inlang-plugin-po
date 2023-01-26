@@ -8,7 +8,7 @@ export async function defineConfig(env) {
   const pluginConfig = {
     // language mean the name of you file
     pathPattern: "./example/{language}.po",
-    referencePath: './example/en.pot',
+    referencePath: './example/de.po',
   };
 
   return {
@@ -20,7 +20,7 @@ export async function defineConfig(env) {
  *  referenceLanguage: "en",
     languages: ["de","es","fr"],
  */
-    referenceLanguage: "en",
+    referenceLanguage: "de",
     languages: ["de", "es", "fr"],
     readResources: (args) =>
       plugin.readResources({ ...args, ...env, pluginConfig }),
