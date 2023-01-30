@@ -22,4 +22,4 @@ msgstr ""
 " "
 
 msgid "test"
-msgstr " "
+msgstr "test "
