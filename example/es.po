@@ -13,10 +13,14 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-
-#. MSG_IR_03_OR_OLDER c=18
 #: ../../Firmware/Filament_sensor.cpp:289
 #: ../../Firmware/Filament_sensor.cpp:366 ../../Firmware/messages.cpp:165
+#. MSG_IR_03_OR_OLDER c=18
 msgid " 0.3 or older"
 msgstr " 0.3 o mayor"
 
+msgid "auto translate me "
+msgstr "tradúceme automáticamente"
+
+msgid "test"
+msgstr "prueba"
