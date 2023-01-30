@@ -20,3 +20,6 @@ msgid " 0.3 or older"
 msgstr ""
 "0.3 or older\n"
 " "
+
+msgid "test"
+msgstr "test"
