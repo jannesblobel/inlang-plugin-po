@@ -18,3 +18,6 @@ msgstr ""
 #. MSG_IR_03_OR_OLDER c=18
 msgid " 0.3 or older"
 msgstr " 0.3 o mayor"
+
+msgid "auto translate me "
+msgstr "tradúceme automáticamente"
