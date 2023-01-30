@@ -129,6 +129,8 @@ export async function writeResources(
     }
     // if reference resource, the path differs. thus, take path from plugin config.
     const resourcePath =
+      // if else with ? and : https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator
+
       resource.languageTag.name === args.config.referenceLanguage
         ? args.pluginConfig.referenceResourcePath
         : args.pluginConfig.pathPattern.replace(
