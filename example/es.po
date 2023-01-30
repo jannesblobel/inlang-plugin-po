@@ -21,3 +21,6 @@ msgstr " 0.3 o mayor"
 
 msgid "auto translate me "
 msgstr "tradúceme automáticamente"
+
+msgid "test"
+msgstr "prueba"
