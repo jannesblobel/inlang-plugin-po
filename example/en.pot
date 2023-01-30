@@ -22,4 +22,7 @@ msgstr ""
 " "
 
 msgid "test"
-msgstr "test "
+msgstr ""
+
+msgid "auto translate me "
+msgstr ""
