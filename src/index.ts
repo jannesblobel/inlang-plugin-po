@@ -56,16 +56,13 @@ export async function readResources(
         "utf-8"
       )) as string
     );
-    resources.push(parseResource(poFile, args.config.referenceLanguage));
-  }
-  // generate a pot file on the fly
-  else {
-    // filter duplicates with set
-    const ids = [
-      ...new Set(
-        resources.flatMap((resource) => query(resource).includedMessageIds())
-      ),
-    ];
+
+    // to enable machine translation
+    // set the msgid as msgstr,because the Machine translation uses msgstr to translate this string into another languaes
+    // this file is never written to the file system.
+    const ids = Object.keys(poFile.translations[""]).filter(
+      (value) => value !== ""
+    );
     const potFile: gettextParser.GetTextTranslations = {
       headers: { header: "" },
       charset: "",
@@ -75,9 +72,35 @@ export async function readResources(
             id,
             {
               msgid: id,
-              msgstr: [
-                "NOT MODIFIABLE. see readme of  https://github.com/jannesblobel/inlang-plugin-po",
-              ],
+              // add the id to get the machine translation back.
+              msgstr: [id],
+            },
+          ])
+        ),
+      },
+    };
+    resources.push(parseResource(potFile, args.config.referenceLanguage));
+  }
+  // generate a pot file on the fly
+  else {
+    // filter duplicates with set
+    const ids = [
+      ...new Set(
+        resources.flatMap((resource) => query(resource).includedMessageIds())
+      ),
+    ];
+
+    const potFile: gettextParser.GetTextTranslations = {
+      headers: { header: "" },
+      charset: "",
+      translations: {
+        [""]: Object.fromEntries(
+          ids.map((id) => [
+            id,
+            {
+              msgid: id,
+              // add the id to get the machine translation back.
+              msgstr: [id],
             },
           ])
         ),
