@@ -19,4 +19,5 @@ msgstr ""
 msgid " 0.3 or older"
 msgstr " 0.3 ou +ancien"
 
-
+msgid "test"
+msgstr "test"
