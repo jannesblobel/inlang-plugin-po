@@ -24,4 +24,4 @@ msgid "test"
 msgstr "This message is used for testing purposes."
 
 msgid "auto translate me "
-msgstr ""
+msgstr "übersetze mich automatisch"
