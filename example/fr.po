@@ -19,8 +19,4 @@ msgstr ""
 msgid " 0.3 or older"
 msgstr " 0.3 ou +ancien"
 
-msgid "auto translate me "
-msgstr "traduis moi automatiquement"
 
-msgid "test"
-msgstr "test"
