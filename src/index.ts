@@ -124,19 +124,18 @@ export async function writeResources(
 ): ReturnType<Config["writeResources"]> {
   for (const resource of args.resources) {
     // dont write generated reference resource to file system
-    if (args.pluginConfig.referenceResourcePath === null) {
+    if (
+      args.pluginConfig.referenceResourcePath === null ||
+      resource.languageTag.name === args.config.referenceLanguage
+    ) {
       continue;
     }
     // if reference resource, the path differs. thus, take path from plugin config.
-    const resourcePath =
-      // if else with ? and : https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator
+    const resourcePath = args.pluginConfig.pathPattern.replace(
+      "{language}",
+      resource.languageTag.name
+    );
 
-      resource.languageTag.name === args.config.referenceLanguage
-        ? args.pluginConfig.referenceResourcePath
-        : args.pluginConfig.pathPattern.replace(
-            "{language}",
-            resource.languageTag.name
-          );
     const poFile = serializeResource(resource);
     const text = gettextParser.po.compile(poFile);
     await args.$fs.writeFile(resourcePath, text, { encoding: "utf-8" });

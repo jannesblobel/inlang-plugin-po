@@ -14457,7 +14457,6 @@ async function readResources(args) {
   return resources;
 }
 async function writeResources(args) {
-  console.log(args.config.referenceLanguage);
   for (const resource of args.resources) {
     if (args.pluginConfig.referenceResourcePath === null || resource.languageTag.name === args.config.referenceLanguage) {
       continue;
