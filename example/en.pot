@@ -14,11 +14,11 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
 
-msgid " 0.3 or older"
-msgstr " 0.3 or older"
+msgid "0.3 or older"
+msgstr ""
 
 msgid "test"
-msgstr "test"
+msgstr ""
 
 msgid "auto translate me "
-msgstr "auto translate me "
+msgstr ""
