@@ -14393,6 +14393,25 @@ function includedMessageIds(resource) {
 // src/index.ts
 async function readResources(args) {
   const resources = [];
+  const directoryOfLanguages = args.pluginConfig.pathPattern.split("/{language}");
+  const files = await args.$fs.readdir(directoryOfLanguages[0]);
+  const pathAfterLanguageCode = directoryOfLanguages[1].substring(
+    0,
+    directoryOfLanguages[1].lastIndexOf("/") + 1
+  );
+  console.log(pathAfterLanguageCode);
+  const languages = [];
+  for (const language of files) {
+    console.log("for each ", language);
+    try {
+      const file = await args.$fs.readdir(
+        directoryOfLanguages[0] + "/" + language + pathAfterLanguageCode
+      );
+      console.log(file, "file");
+    } catch (error) {
+      console.log(error, "error");
+    }
+  }
   for (const language of args.config.languages.filter(
     (lang) => lang !== args.config.referenceLanguage
   )) {
@@ -14412,25 +14431,7 @@ async function readResources(args) {
         "utf-8"
       )
     );
-    const ids = Object.keys(poFile.translations[""]).filter(
-      (value) => value !== ""
-    );
-    const potFile = {
-      headers: { header: "" },
-      charset: "",
-      translations: {
-        [""]: Object.fromEntries(
-          ids.map((id) => [
-            id,
-            {
-              msgid: id,
-              msgstr: [id]
-            }
-          ])
-        )
-      }
-    };
-    resources.push(parseResource(potFile, args.config.referenceLanguage));
+    resources.push(parseResource(poFile, args.config.referenceLanguage));
   } else {
     const ids = [
       ...new Set(
@@ -14446,7 +14447,9 @@ async function readResources(args) {
             id,
             {
               msgid: id,
-              msgstr: [id]
+              msgstr: [
+                "NOT MODIFIABLE. see readme of  https://github.com/jannesblobel/inlang-plugin-po"
+              ]
             }
           ])
         )
@@ -14458,10 +14461,10 @@ async function readResources(args) {
 }
 async function writeResources(args) {
   for (const resource of args.resources) {
-    if (args.pluginConfig.referenceResourcePath === null || resource.languageTag.name === args.config.referenceLanguage) {
+    if (args.pluginConfig.referenceResourcePath === null) {
       continue;
     }
-    const resourcePath = args.pluginConfig.pathPattern.replace(
+    const resourcePath = resource.languageTag.name === args.config.referenceLanguage ? args.pluginConfig.referenceResourcePath : args.pluginConfig.pathPattern.replace(
       "{language}",
       resource.languageTag.name
     );

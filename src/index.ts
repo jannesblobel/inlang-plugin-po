@@ -35,6 +35,48 @@ export async function readResources(
 ): ReturnType<Config["readResources"]> {
   const resources: ast.Resource[] = [];
 
+  // !! use this function. if the .po files are in diffrent folders like en/LC_Messages/django.po
+  // // async function getLanguages(env) {
+  //   // languagePath is the place where the languages are stored
+  //   //get all folders / files which are stored in the translationsStoredIn
+  // the directoryOfLanguages is the folder, where all the languages folder are stored.
+  // to get the diffrend langues
+  const directoryOfLanguages =
+    args.pluginConfig.pathPattern.split("/{language}");
+  const files = await args.$fs.readdir(directoryOfLanguages[0]);
+  const pathAfterLanguageCode = directoryOfLanguages[1].substring(
+    0,
+    //+1 so that '/' is not taken away from the Path
+    directoryOfLanguages[1].lastIndexOf("/") + 1
+  );
+
+  console.log(pathAfterLanguageCode);
+  //   // files that end with .po
+  //   // remove the .po extension to only get language name
+
+  const languages = [];
+  //   // filter all folder by po files
+  for (const language of files) {
+    //     //try to read a po file
+    console.log("for each ", language);
+    try {
+      const file = await args.$fs.readdir(
+        directoryOfLanguages[0] + "/" + language + pathAfterLanguageCode
+      );
+      // somtime are more than 1 file in the folder example: messages.mo and messages.po
+      console.log(file, "file");
+      // for (const _file of file) {
+      //   if (_file.endsWith(".po")) {
+      //     //if the po file is recognised, the language code is entered into the array languages returned by the function getLangauges
+      //     languages.push(language);
+      //   }
+      // }
+    } catch (error) {
+      console.log(error, "error");
+    }
+  }
+  // console.log(languages);
+
   // filter the reflanguage, because i could be, that is a pot file instead of a po
   for (const language of args.config.languages.filter(
     (lang) => lang !== args.config.referenceLanguage
@@ -56,30 +98,7 @@ export async function readResources(
         "utf-8"
       )) as string
     );
-
-    // to enable machine translation
-    // set the msgid as msgstr,because the Machine translation uses msgstr to translate this string into another languaes
-    // this file is never written to the file system.
-    const ids = Object.keys(poFile.translations[""]).filter(
-      (value) => value !== ""
-    );
-    const potFile: gettextParser.GetTextTranslations = {
-      headers: { header: "" },
-      charset: "",
-      translations: {
-        [""]: Object.fromEntries(
-          ids.map((id) => [
-            id,
-            {
-              msgid: id,
-              // add the id to get the machine translation back.
-              msgstr: [id],
-            },
-          ])
-        ),
-      },
-    };
-    resources.push(parseResource(potFile, args.config.referenceLanguage));
+    resources.push(parseResource(poFile, args.config.referenceLanguage));
   }
   // generate a pot file on the fly
   else {
@@ -89,7 +108,6 @@ export async function readResources(
         resources.flatMap((resource) => query(resource).includedMessageIds())
       ),
     ];
-
     const potFile: gettextParser.GetTextTranslations = {
       headers: { header: "" },
       charset: "",
@@ -99,8 +117,9 @@ export async function readResources(
             id,
             {
               msgid: id,
-              // add the id to get the machine translation back.
-              msgstr: [id],
+              msgstr: [
+                "NOT MODIFIABLE. see readme of  https://github.com/jannesblobel/inlang-plugin-po",
+              ],
             },
           ])
         ),
@@ -124,18 +143,17 @@ export async function writeResources(
 ): ReturnType<Config["writeResources"]> {
   for (const resource of args.resources) {
     // dont write generated reference resource to file system
-    if (
-      args.pluginConfig.referenceResourcePath === null ||
-      resource.languageTag.name === args.config.referenceLanguage
-    ) {
+    if (args.pluginConfig.referenceResourcePath === null) {
       continue;
     }
     // if reference resource, the path differs. thus, take path from plugin config.
-    const resourcePath = args.pluginConfig.pathPattern.replace(
-      "{language}",
-      resource.languageTag.name
-    );
-
+    const resourcePath =
+      resource.languageTag.name === args.config.referenceLanguage
+        ? args.pluginConfig.referenceResourcePath
+        : args.pluginConfig.pathPattern.replace(
+            "{language}",
+            resource.languageTag.name
+          );
     const poFile = serializeResource(resource);
     const text = gettextParser.po.compile(poFile);
     await args.$fs.writeFile(resourcePath, text, { encoding: "utf-8" });
