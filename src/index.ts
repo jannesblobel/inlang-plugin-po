@@ -22,69 +22,50 @@ export type PluginConfig = {
 export async function getLanguages(
   // merging the first argument from config (which contains all arguments)
   // with the custom pluginConfig argument
-  args: Parameters<Config["readResources"]>[0] &
-    EnvironmentFunctions & {
-      pluginConfig: PluginConfig;
-    }
+  args: EnvironmentFunctions & {
+    pluginConfig: PluginConfig;
+    referenceLanguage: string;
+  }
 ) {
-  const directoryOfLanguages =
-    args.pluginConfig.pathPattern.split("/{language}");
-  const files = await args.$fs.readdir(directoryOfLanguages[0]);
-  const pathAfterLanguageCode = directoryOfLanguages[1].substring(
-    0,
-    //+1 so that '/' is not taken away from the Path
-    directoryOfLanguages[1].lastIndexOf("/") + 1
-  );
+  // splitting a path like "resources/{language}.po" will always return an array with two elements
+  // namely before and after {language}
+  const [pathBeforeLanguage, pathAfterLanguage] =
+    args.pluginConfig.pathPattern.split("{language}");
 
-  console.log(pathAfterLanguageCode);
-  //   // files that end with .po
-  //   // remove the .po extension to only get language name
+  const pathAfterLanguageisDirectory = pathAfterLanguage.startsWith("/");
 
-  const languages = [];
+  // letzte index of /     //+1 so that '/' is not taken away from the Path
+
+  const paths = await args.$fs.readdir(pathBeforeLanguage);
+
+  const languages = args.pluginConfig.referenceResourcePath
+    ? []
+    : [args.referenceLanguage];
   //   // filter all folder by po files
-  for (const language of files) {
-    //     //try to read a po file
 
-    if (directoryOfLanguages[1].includes("/")) {
-      try {
-        const files = await args.$fs.readdir(
-          directoryOfLanguages[0] + "/" + language + pathAfterLanguageCode
-        );
-        // somtime are more than 1 file in the folder example: messages.mo and messages.po
-        console.log(files, "file");
+  for (const language of paths) {
+    if (pathAfterLanguageisDirectory) {
+      const files = await args.$fs.readdir(
+        pathBeforeLanguage +
+          language +
+          pathAfterLanguage.substring(0, pathAfterLanguage.lastIndexOf("/") + 1)
+      );
+      // somtime are more than 1 file in the folder example: messages.mo and messages.po
 
-        for (const file of files) {
-          if (typeof file === "string" && file.endsWith(".po")) {
-            //if the
-            console.log(file.endsWith(".po"), "name");
-            languages.push(language);
-          }
+      for (const file of files) {
+        if (typeof file === "string" && file.endsWith(".po")) {
+          //if the
+          languages.push(language as string);
         }
-      } catch (error) {
-        console.log(error, "error");
       }
     } else {
-      // wenn es kein Order gibt, man kann aber die for each dann besser schreiben und nutzen
-      console.log(directoryOfLanguages, "without dhanig");
+      if (typeof language === "string" && language.endsWith(".po")) {
+        languages.push(language.replace(".po", ""));
+      } else if (typeof language === "string" && language.endsWith(".pot")) {
+        languages.push(language.replace(".pot", ""));
+      }
     }
-    console.log("for each ", language);
-    // try {
-    //   const file = await args.$fs.readdir(
-    //     directoryOfLanguages[0] + "/" + language + pathAfterLanguageCode
-    //   );
-    //   // somtime are more than 1 file in the folder example: messages.mo and messages.po
-    //   console.log(file, "file");
-    //   // for (const _file of file) {
-    //   //   if (_file.endsWith(".po")) {
-    //   //     //if the po file is recognised, the language code is entered into the array languages returned by the function getLangauges
-    //   //     languages.push(language);
-    //   //   }
-    //   // }
-    // } catch (error) {
-    //   console.log(error, "error");
-    // }
   }
-  console.log(languages, "index");
 
   return languages;
 }
@@ -120,7 +101,6 @@ export async function readResources(
     const poFile = gettextParser.po.parse(
       (await args.$fs.readFile(resourcePath, "utf-8")) as string
     );
-    console.log();
     resources.push(parseResource(poFile, language));
   }
 
@@ -133,7 +113,6 @@ export async function readResources(
         "utf-8"
       )) as string
     );
-    console.log(poFile, "pofile refercenlanguage");
     resources.push(parseResource(poFile, args.config.referenceLanguage));
   }
 
@@ -156,9 +135,7 @@ export async function readResources(
             id,
             {
               msgid: id,
-              msgstr: [
-                "NOT MODIFIABLE. see readme of  https://github.com/jannesblobel/inlang-plugin-po",
-              ],
+              msgstr: [id],
             },
           ])
         ),
