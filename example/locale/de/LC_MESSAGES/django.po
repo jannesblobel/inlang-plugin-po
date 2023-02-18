@@ -23,6 +23,10 @@ msgstr ""
 msgid "date"
 msgstr "Datum"
 
+#. test comment
+msgid "test"
+msgstr "This message is used for testing purposes."
+
 #: conf.py:18
 msgid "year"
 msgstr "Jahr"

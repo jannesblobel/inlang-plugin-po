@@ -18,7 +18,7 @@ msgid "0.3 or older"
 msgstr ""
 
 msgid "test"
-msgstr ""
+msgstr "This message is used for testing purposes."
 
 msgid "auto translate me "
 msgstr ""
