@@ -25,30 +25,33 @@ Use a .pot file in your project. It is easier to manage the ids in a file instea
  */
 export async function defineConfig(env) {
   // importing plugin from local file for testing purposes
-  const plugin = await env.$import("../dist/index.js");
+  const plugin = await env.$import("https://cdn.jsdelivr.net/gh/jannesblobel/inlang-plugin-po@1/dist/index.js");
 
   const pluginConfig = {
-    // language mean the name of you file
-    pathPattern: "./example/{language}.po",
+  // Replace pathPattern with the path where your languages are stored.
+    pathPattern: "./example/locale/{language}/LC_MESSAGES/django.po",
+
+    // Your referenceResourcePath could be
+    // null or "./example/locale/en/LC_MESSAGES/django.pot",
+    // dependent if you use pot file as you referenceLanguage
+    referenceResourcePath: null,
   };
 
   return {
-Ff your project uses a pot file, use it as a reference language. 
-// !! do not include the .pot file in the Languages array 
-/**
- * @example
- * example files: en.pot, de.po, es.po, fr.po
- *  referenceLanguage: "en",
-    languages: ["de","es","fr"],
- */
+    //  it is necessary to add a referenceLanguage even if referenceResourcePath = null 
     referenceLanguage: "en",
-    languages: ["de","es","fr"],
+    languages: await plugin.getLanguages({
+      referenceLanguage: "en",
+      ...env,
+      pluginConfig,
+    }),
     readResources: (args) =>
       plugin.readResources({ ...args, ...env, pluginConfig }),
     writeResources: (args) =>
       plugin.writeResources({ ...args, ...env, pluginConfig }),
   };
 }
+
 ```
 
 For additional usage information, take a look at [example](./example/).
