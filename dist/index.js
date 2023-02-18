@@ -14392,36 +14392,28 @@ function includedMessageIds(resource) {
 
 // src/index.ts
 async function getLanguages(args) {
-  const directoryOfLanguages = args.pluginConfig.pathPattern.split("/{language}");
-  const files = await args.$fs.readdir(directoryOfLanguages[0]);
-  const pathAfterLanguageCode = directoryOfLanguages[1].substring(
-    0,
-    directoryOfLanguages[1].lastIndexOf("/") + 1
-  );
-  console.log(pathAfterLanguageCode);
-  const languages = [];
-  for (const language of files) {
-    if (directoryOfLanguages[1].includes("/")) {
-      try {
-        const files2 = await args.$fs.readdir(
-          directoryOfLanguages[0] + "/" + language + pathAfterLanguageCode
-        );
-        console.log(files2, "file");
-        for (const file of files2) {
-          if (typeof file === "string" && file.endsWith(".po")) {
-            console.log(file.endsWith(".po"), "name");
-            languages.push(language);
-          }
+  const [pathBeforeLanguage, pathAfterLanguage] = args.pluginConfig.pathPattern.split("{language}");
+  const pathAfterLanguageisDirectory = pathAfterLanguage.startsWith("/");
+  const paths = await args.$fs.readdir(pathBeforeLanguage);
+  const languages = args.pluginConfig.referenceResourcePath ? [] : [args.referenceLanguage];
+  for (const language of paths) {
+    if (pathAfterLanguageisDirectory) {
+      const files = await args.$fs.readdir(
+        pathBeforeLanguage + language + pathAfterLanguage.substring(0, pathAfterLanguage.lastIndexOf("/") + 1)
+      );
+      for (const file of files) {
+        if (typeof file === "string" && file.endsWith(".po")) {
+          languages.push(language);
         }
-      } catch (error) {
-        console.log(error, "error");
       }
     } else {
-      console.log(directoryOfLanguages, "without dhanig");
+      if (typeof language === "string" && language.endsWith(".po")) {
+        languages.push(language.replace(".po", ""));
+      } else if (typeof language === "string" && language.endsWith(".pot")) {
+        languages.push(language.replace(".pot", ""));
+      }
     }
-    console.log("for each ", language);
   }
-  console.log(languages, "index");
   return languages;
 }
 async function readResources(args) {
@@ -14436,7 +14428,6 @@ async function readResources(args) {
     const poFile = import_gettext_parser.default.po.parse(
       await args.$fs.readFile(resourcePath, "utf-8")
     );
-    console.log();
     resources.push(parseResource(poFile, language));
   }
   if (args.pluginConfig.referenceResourcePath) {
@@ -14446,7 +14437,6 @@ async function readResources(args) {
         "utf-8"
       )
     );
-    console.log(poFile, "pofile refercenlanguage");
     resources.push(parseResource(poFile, args.config.referenceLanguage));
   } else {
     const ids = [
@@ -14463,9 +14453,7 @@ async function readResources(args) {
             id,
             {
               msgid: id,
-              msgstr: [
-                "NOT MODIFIABLE. see readme of  https://github.com/jannesblobel/inlang-plugin-po"
-              ]
+              msgstr: [id]
             }
           ])
         )
