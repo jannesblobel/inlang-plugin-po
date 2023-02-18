@@ -7,7 +7,7 @@ export async function defineConfig(env) {
 
   const pluginConfig = {
     // language mean the name of you file
-    pathPattern: "./example/{language}.po",
+    pathPattern: "./example/locale/{language}/LC_MESSAGES/django.po",
     referenceResourcePath: "./example/en.pot",
   };
 
