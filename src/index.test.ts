@@ -11,12 +11,12 @@ import { query } from "@inlang/core/query";
 
 const env = await initializeTestEnvironment();
 const config: Config = await defineConfig(env);
-
+console.log(config.languages, "langugaes");
 describe("plugin", async () => {
   const resources = await config.readResources({ config });
   const referenceResource = resources.find(
     // the pot file is a template and cannot be rewritten or had an msgstr therefore we use "de"
-    (resource) => resource.languageTag.name === "de"
+    (resource) => resource.languageTag.name === "en"
   )!;
 
   describe("readResources()", async () => {

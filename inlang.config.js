@@ -5,12 +5,17 @@ export async function defineConfig(env) {
   // importing plugin from local file for testing purposes
   const plugin = await env.$import("../dist/index.js");
 
+  // const pluginConfig = {
+  //   // language mean the name of you file
+  //   pathPattern: "./example/locale/{language}/LC_MESSAGES/django.po",
+  //   referenceResourcePath: "./example/locale/de/LC_MESSAGES/django.po",
+
+  // };
   const pluginConfig = {
     // language mean the name of you file
-    pathPattern: "./example/locale/{language}/LC_MESSAGES/django.po",
+    pathPattern: "./example/{language}.po",
     referenceResourcePath: "./example/en.pot",
   };
-
   return {
     // if your project use a pot file use the pot as the reference Language
     // !! do not add the pot file in the Languages array
@@ -21,7 +26,8 @@ export async function defineConfig(env) {
     languages: ["de","es","fr"],
  */
     referenceLanguage: "en",
-    languages: await getLanguages(env),
+    languages: await plugin.getLanguages({ ...env, pluginConfig }),
+    // languages: await getLanguages(env),
     readResources: (args) =>
       plugin.readResources({ ...args, ...env, pluginConfig }),
     writeResources: (args) =>
@@ -29,20 +35,20 @@ export async function defineConfig(env) {
   };
 }
 
-/**
- * Automatically derives the languages in this repository.
- */
-async function getLanguages(env) {
-  const files = await env.$fs.readdir("./example");
-  // files that end with .json
-  // remove the .json extension to only get language name
-  const languages = files
-    // @ts-ignore
-    .filter((name) => name.endsWith(".po"))
-    // @ts-ignore
-    .map((name) => name.replace(".po", ""));
-  return languages;
-}
+// /**
+//  * Automatically derives the languages in this repository.
+//  */
+// async function getLanguages(env) {
+//   const files = await env.$fs.readdir("./example");
+//   // files that end with .json
+//   // remove the .json extension to only get language name
+//   const languages = files
+//     // @ts-ignore
+//     .filter((name) => name.endsWith(".po"))
+//     // @ts-ignore
+//     .map((name) => name.replace(".po", ""));
+//   return languages;
+// }
 
 // !! use this function. if the .po files are in diffrent folders like en/LC_Messages/django.po
 // // async function getLanguages(env) {

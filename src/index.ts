@@ -19,28 +19,14 @@ export type PluginConfig = {
   referenceResourcePath: string | null;
 };
 
-/**
- * Reading resources.
- *
- * The function merges the args from Config['readResources'] with the pluginConfig
- * and EnvironmentFunctions.
- */
-export async function readResources(
+export async function getLanguages(
   // merging the first argument from config (which contains all arguments)
   // with the custom pluginConfig argument
   args: Parameters<Config["readResources"]>[0] &
     EnvironmentFunctions & {
       pluginConfig: PluginConfig;
     }
-): ReturnType<Config["readResources"]> {
-  const resources: ast.Resource[] = [];
-
-  // !! use this function. if the .po files are in diffrent folders like en/LC_Messages/django.po
-  // // async function getLanguages(env) {
-  //   // languagePath is the place where the languages are stored
-  //   //get all folders / files which are stored in the translationsStoredIn
-  // the directoryOfLanguages is the folder, where all the languages folder are stored.
-  // to get the diffrend langues
+) {
   const directoryOfLanguages =
     args.pluginConfig.pathPattern.split("/{language}");
   const files = await args.$fs.readdir(directoryOfLanguages[0]);
@@ -58,29 +44,75 @@ export async function readResources(
   //   // filter all folder by po files
   for (const language of files) {
     //     //try to read a po file
-    console.log("for each ", language);
-    try {
-      const file = await args.$fs.readdir(
-        directoryOfLanguages[0] + "/" + language + pathAfterLanguageCode
-      );
-      // somtime are more than 1 file in the folder example: messages.mo and messages.po
-      console.log(file, "file");
-      // for (const _file of file) {
-      //   if (_file.endsWith(".po")) {
-      //     //if the po file is recognised, the language code is entered into the array languages returned by the function getLangauges
-      //     languages.push(language);
-      //   }
-      // }
-    } catch (error) {
-      console.log(error, "error");
-    }
-  }
-  // console.log(languages);
 
-  // filter the reflanguage, because i could be, that is a pot file instead of a po
+    if (directoryOfLanguages[1].includes("/")) {
+      try {
+        const files = await args.$fs.readdir(
+          directoryOfLanguages[0] + "/" + language + pathAfterLanguageCode
+        );
+        // somtime are more than 1 file in the folder example: messages.mo and messages.po
+        console.log(files, "file");
+
+        for (const file of files) {
+          if (typeof file === "string" && file.endsWith(".po")) {
+            //if the
+            console.log(file.endsWith(".po"), "name");
+            languages.push(language);
+          }
+        }
+      } catch (error) {
+        console.log(error, "error");
+      }
+    } else {
+      // wenn es kein Order gibt, man kann aber die for each dann besser schreiben und nutzen
+      console.log(directoryOfLanguages, "without dhanig");
+    }
+    console.log("for each ", language);
+    // try {
+    //   const file = await args.$fs.readdir(
+    //     directoryOfLanguages[0] + "/" + language + pathAfterLanguageCode
+    //   );
+    //   // somtime are more than 1 file in the folder example: messages.mo and messages.po
+    //   console.log(file, "file");
+    //   // for (const _file of file) {
+    //   //   if (_file.endsWith(".po")) {
+    //   //     //if the po file is recognised, the language code is entered into the array languages returned by the function getLangauges
+    //   //     languages.push(language);
+    //   //   }
+    //   // }
+    // } catch (error) {
+    //   console.log(error, "error");
+    // }
+  }
+  console.log(languages, "index");
+
+  return languages;
+}
+/**
+ * Reading resources.
+ *
+ * The function merges the args from Config['readResources'] with the pluginConfig
+ * and EnvironmentFunctions.
+ */
+
+export async function readResources(
+  // merging the first argument from config (which contains all arguments)
+  // with the custom pluginConfig argument
+  args: Parameters<Config["readResources"]>[0] &
+    EnvironmentFunctions & {
+      pluginConfig: PluginConfig;
+    }
+): ReturnType<Config["readResources"]> {
+  const resources: ast.Resource[] = [];
+
+  // Action:     this .filter funciton in the forEach expression , filters the referenceLanguage from the array of all languages retrieved by the getLanguages function.
+  // Reason:    because it could be that the reference language is a ".pot" file instead of a ".po" file and we do not want to overwrite a ".pot" or the reference language,
+  //            because the "msgid" in this file is in most cases the ID for all other ".po" files.
   for (const language of args.config.languages.filter(
     (lang) => lang !== args.config.referenceLanguage
   )) {
+    // Action:  replace the word {language} witch could means the languagecode from pathPattern with the languageCode
+    // Reason: each language is saved in its own file or folder
     const resourcePath = args.pluginConfig.pathPattern.replace(
       "{language}",
       language
@@ -88,9 +120,12 @@ export async function readResources(
     const poFile = gettextParser.po.parse(
       (await args.$fs.readFile(resourcePath, "utf-8")) as string
     );
+    console.log();
     resources.push(parseResource(poFile, language));
   }
-  // reference resource exists read from file
+
+  // Action:  if a resource file exists, it will be read and processed in a usual way
+  // Reason:  split off from the others because of the overwriting problem described above.
   if (args.pluginConfig.referenceResourcePath) {
     const poFile = gettextParser.po.parse(
       (await args.$fs.readFile(
@@ -98,11 +133,15 @@ export async function readResources(
         "utf-8"
       )) as string
     );
+    console.log(poFile, "pofile refercenlanguage");
     resources.push(parseResource(poFile, args.config.referenceLanguage));
   }
-  // generate a pot file on the fly
+
+  // Action: Create a ".pot" file if no ".pot" file exists. The ".pot" file would be created from all ".po" files found.
+  //         This ".pot" file only exists for inlang and is not committed to the project/repo.
+  // Reason: Ensure that all "msgID"s will are found and if nessesary created missing "msgID"s in other ".po"files
   else {
-    // filter duplicates with set
+    // drop "msgID" duplicates with set and create a ".pot" file without duplicate IDs
     const ids = [
       ...new Set(
         resources.flatMap((resource) => query(resource).includedMessageIds())
