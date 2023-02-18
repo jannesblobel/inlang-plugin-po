@@ -14391,8 +14391,7 @@ function includedMessageIds(resource) {
 }
 
 // src/index.ts
-async function readResources(args) {
-  const resources = [];
+async function getLanguages(args) {
   const directoryOfLanguages = args.pluginConfig.pathPattern.split("/{language}");
   const files = await args.$fs.readdir(directoryOfLanguages[0]);
   const pathAfterLanguageCode = directoryOfLanguages[1].substring(
@@ -14402,16 +14401,31 @@ async function readResources(args) {
   console.log(pathAfterLanguageCode);
   const languages = [];
   for (const language of files) {
-    console.log("for each ", language);
-    try {
-      const file = await args.$fs.readdir(
-        directoryOfLanguages[0] + "/" + language + pathAfterLanguageCode
-      );
-      console.log(file, "file");
-    } catch (error) {
-      console.log(error, "error");
+    if (directoryOfLanguages[1].includes("/")) {
+      try {
+        const files2 = await args.$fs.readdir(
+          directoryOfLanguages[0] + "/" + language + pathAfterLanguageCode
+        );
+        console.log(files2, "file");
+        for (const file of files2) {
+          if (typeof file === "string" && file.endsWith(".po")) {
+            console.log(file.endsWith(".po"), "name");
+            languages.push(language);
+          }
+        }
+      } catch (error) {
+        console.log(error, "error");
+      }
+    } else {
+      console.log(directoryOfLanguages, "without dhanig");
     }
+    console.log("for each ", language);
   }
+  console.log(languages, "index");
+  return languages;
+}
+async function readResources(args) {
+  const resources = [];
   for (const language of args.config.languages.filter(
     (lang) => lang !== args.config.referenceLanguage
   )) {
@@ -14422,6 +14436,7 @@ async function readResources(args) {
     const poFile = import_gettext_parser.default.po.parse(
       await args.$fs.readFile(resourcePath, "utf-8")
     );
+    console.log();
     resources.push(parseResource(poFile, language));
   }
   if (args.pluginConfig.referenceResourcePath) {
@@ -14431,6 +14446,7 @@ async function readResources(args) {
         "utf-8"
       )
     );
+    console.log(poFile, "pofile refercenlanguage");
     resources.push(parseResource(poFile, args.config.referenceLanguage));
   } else {
     const ids = [
@@ -14524,6 +14540,7 @@ function serializeMessage(message) {
   };
 }
 export {
+  getLanguages,
   readResources,
   writeResources
 };
