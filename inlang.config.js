@@ -6,18 +6,15 @@ export async function defineConfig(env) {
   const plugin = await env.$import("../dist/index.js");
 
   const pluginConfig = {
-    // language mean the name of you file
     pathPattern: "./example/locale/{language}/LC_MESSAGES/django.po",
+
+    // Your referenceResourcePath could be
+    // null or "./example/locale/en/LC_MESSAGES/django.pot",
+    // dependent if you use pot file as you referenceLanguage
     referenceResourcePath: null,
   };
 
   return {
-    /**
- * @example
- * example files: en.pot, de.po, es.po, fr.po
- *  referenceLanguage: "en",
-    languages: ["de","es","fr"],
- */
     referenceLanguage: "en",
     languages: await plugin.getLanguages({
       referenceLanguage: "en",
