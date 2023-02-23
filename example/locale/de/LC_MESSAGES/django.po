@@ -15,7 +15,7 @@ msgstr ""
 
 #: conf.py:17
 msgid "date"
-msgstr "Datum"
+msgstr "Datu"
 
 #. test comment
 msgid "test"
