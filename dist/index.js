@@ -14465,7 +14465,7 @@ async function readResources(args) {
 }
 async function writeResources(args) {
   for (const resource of args.resources) {
-    if (args.pluginConfig.referenceResourcePath === null) {
+    if (args.pluginConfig.referenceResourcePath === null && resource.languageTag.name === args.config.referenceLanguage) {
       continue;
     }
     const resourcePath = resource.languageTag.name === args.config.referenceLanguage ? args.pluginConfig.referenceResourcePath : args.pluginConfig.pathPattern.replace(
@@ -14474,7 +14474,9 @@ async function writeResources(args) {
     );
     const poFile = serializeResource(resource);
     const text = import_gettext_parser.default.po.compile(poFile);
-    await args.$fs.writeFile(resourcePath, text, { encoding: "utf-8" });
+    if (resourcePath) {
+      await args.$fs.writeFile(resourcePath, text, { encoding: "utf-8" });
+    }
   }
 }
 function parseResource(poFile, language) {

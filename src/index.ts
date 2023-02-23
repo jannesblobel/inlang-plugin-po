@@ -159,7 +159,10 @@ export async function writeResources(
 ): ReturnType<Config["writeResources"]> {
   for (const resource of args.resources) {
     // dont write generated reference resource to file system
-    if (args.pluginConfig.referenceResourcePath === null) {
+    if (
+      args.pluginConfig.referenceResourcePath === null &&
+      resource.languageTag.name === args.config.referenceLanguage
+    ) {
       continue;
     }
     // if reference resource, the path differs. thus, take path from plugin config.
@@ -172,7 +175,9 @@ export async function writeResources(
           );
     const poFile = serializeResource(resource);
     const text = gettextParser.po.compile(poFile);
-    await args.$fs.writeFile(resourcePath, text, { encoding: "utf-8" });
+    if (resourcePath) {
+      await args.$fs.writeFile(resourcePath, text, { encoding: "utf-8" });
+    }
   }
 }
 
