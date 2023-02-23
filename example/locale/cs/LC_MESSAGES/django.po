@@ -16,7 +16,7 @@ msgstr ""
 
 #: conf.py:17
 msgid "date"
-msgstr "datum"
+msgstr "dat"
 
 #: conf.py:18
 msgid "year"
