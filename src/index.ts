@@ -38,10 +38,10 @@ export async function getLanguages(
 
   const paths = await args.$fs.readdir(pathBeforeLanguage);
 
+  //
   const languages = args.pluginConfig.referenceResourcePath
     ? []
     : [args.referenceLanguage];
-  //   // filter all folder by po files
 
   for (const language of paths) {
     if (pathAfterLanguageisDirectory) {
