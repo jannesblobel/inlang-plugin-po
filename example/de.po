@@ -21,7 +21,7 @@ msgstr " 0.3 oder älter"
 
 #. test comment
 msgid "test"
-msgstr "This message is used for "
+msgstr "This message is used for testing purposes."
 
 msgid "auto translate me "
 msgstr "übersetze mich automatisch"
