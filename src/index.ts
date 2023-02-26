@@ -1,6 +1,6 @@
 import type { Config, EnvironmentFunctions } from "@inlang/core/config";
 import type * as ast from "@inlang/core/ast";
-import gettextParser, { GetTextTranslation, po } from "gettext-parser";
+import gettextParser, { GetTextTranslation } from "gettext-parser";
 import { query } from "@inlang/core/query";
 
 /**
