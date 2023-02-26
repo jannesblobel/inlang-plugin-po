@@ -1,3 +1,8 @@
+# Django Filter translation.
+# Copyright (C) 2017
+# This file is distributed under the same license as the django_filter package.
+# Anderson Scouto da Silva, 2017.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"

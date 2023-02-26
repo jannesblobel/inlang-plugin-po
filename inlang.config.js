@@ -7,7 +7,6 @@ export async function defineConfig(env) {
 
   const pluginConfig = {
     pathPattern: "./example/locale/{language}/LC_MESSAGES/django.po",
-    // pathPattern: "./example/{language}.po",
 
     // Your referenceResourcePath could be
     // null or "./example/locale/en/LC_MESSAGES/django.pot",
@@ -22,7 +21,6 @@ export async function defineConfig(env) {
       ...env,
       pluginConfig,
     }),
-    // languages: ["de", "es", "fr",],
     readResources: (args) =>
       plugin.readResources({ ...args, ...env, pluginConfig }),
     writeResources: (args) =>

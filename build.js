@@ -7,7 +7,7 @@ await build({
   minify: process.env.DEV ? false : true,
   watch: process.env.DEV ? true : false,
   format: "esm",
-  platform: "browser",
+  platform: "node",
   target: "es2020",
   outfile: "dist/index.js",
   plugins: [NodeModulesPolyfillPlugin()],

@@ -1,3 +1,10 @@
+# Django Filter translation.
+# Copyright (C) 2017
+# This file is distributed under the same license as the django_filter package.
+# Anderson Scouto da Silva, 2017.
+#
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Prusa-Firmware\n"
@@ -13,12 +20,14 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
+# 567 Und das hier
 #: ../../Firmware/Filament_sensor.cpp:289
 #: ../../Firmware/Filament_sensor.cpp:366 ../../Firmware/messages.cpp:165
 #. MSG_IR_03_OR_OLDER c=18
 msgid " 0.3 or older"
 msgstr " 0.3 oder älter"
 
+# ich muss 456
 #. test comment
 msgid "test"
 msgstr "This message is used for testing purposes."
@@ -28,3 +37,6 @@ msgstr "übersetze mich automatisch"
 
 msgid "0.3 or older"
 msgstr "0,3 oder älter"
+
+msgid "new-message"
+msgstr "Newly created message"

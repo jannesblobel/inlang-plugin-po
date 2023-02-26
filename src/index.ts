@@ -1,6 +1,6 @@
 import type { Config, EnvironmentFunctions } from "@inlang/core/config";
 import type * as ast from "@inlang/core/ast";
-import gettextParser, { GetTextTranslation } from "gettext-parser";
+import gettextParser, { GetTextTranslation, po } from "gettext-parser";
 import { query } from "@inlang/core/query";
 
 /**
@@ -101,6 +101,7 @@ export async function readResources(
     const poFile = gettextParser.po.parse(
       (await args.$fs.readFile(resourcePath, "utf-8")) as string
     );
+
     resources.push(parseResource(poFile, language));
   }
 
@@ -143,7 +144,6 @@ export async function readResources(
     };
     resources.push(parseResource(potFile, args.config.referenceLanguage));
   }
-
   return resources;
 }
 

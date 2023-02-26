@@ -11,7 +11,6 @@ import { query } from "@inlang/core/query";
 
 const env = await initializeTestEnvironment();
 const config: Config = await defineConfig(env);
-console.log(config.languages, "langugaes");
 describe("plugin", async () => {
   const resources = await config.readResources({ config });
   const referenceResource = resources.find(
@@ -87,7 +86,6 @@ describe("plugin", async () => {
     }
     // cant use query at this point assumption: query(referenceResource)  run only only once and have not noticed the changes
     const message = query(testResource).get({ id: "test" });
-    console.log(message, "message");
     expect(message?.metadata.comments.extracted).toBe("test comment");
   });
 });
