@@ -158,14 +158,16 @@ export async function writeResources(
     EnvironmentFunctions & { pluginConfig: PluginConfig }
 ): ReturnType<Config["writeResources"]> {
   for (const resource of args.resources) {
-    // dont write generated reference resource to file system
+    // Action: prevent the user from rewriting a pot file
+    // Reason:  pot Contains the keys for each msgstr
     if (
       args.pluginConfig.referenceResourcePath === null &&
       resource.languageTag.name === args.config.referenceLanguage
     ) {
       continue;
     }
-    // if reference resource, the path differs. thus, take path from plugin config.
+    // Action:if a referenceResourcePath is defined, the path differs. Thus, take path from plugin config.
+    // Reason:  referenceResourcePath is defined or null and we need to filter the defineded referenceResourcePath
     const resourcePath =
       resource.languageTag.name === args.config.referenceLanguage
         ? args.pluginConfig.referenceResourcePath
