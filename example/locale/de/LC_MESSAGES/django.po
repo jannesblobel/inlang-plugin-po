@@ -27,7 +27,7 @@ msgstr "Jahr"
 
 #: conf.py:19
 msgid "month"
-msgstr "Monat"
+msgstr "Monae"
 
 #: conf.py:20
 msgid "day"
