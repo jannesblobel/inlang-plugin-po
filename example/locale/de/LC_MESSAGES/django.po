@@ -13,13 +13,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.5.4\n"
 
+#. test comment
+msgid "test"
+msgstr "This message is used for testing purposes."
+
 #: conf.py:17
 msgid "date"
 msgstr "Datum"
 
-#. test comment
-msgid "test"
-msgstr "This message is used for testing purposes."
+
 
 #: conf.py:18
 msgid "year"

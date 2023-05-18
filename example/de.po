@@ -37,5 +37,4 @@ msgstr "übersetze mich automatisch"
 msgid "0.3 or older"
 msgstr "0,3 oder älter"
 
-msgid "new-message"
-msgstr "Newly created message"
+
