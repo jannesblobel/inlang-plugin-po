@@ -66,7 +66,6 @@ export async function getLanguages(
       }
     }
   }
-
   return languages;
 }
 /**
@@ -101,7 +100,6 @@ export async function readResources(
     const poFile = gettextParser.po.parse(
       (await args.$fs.readFile(resourcePath, "utf-8")) as string
     );
-
     resources.push(parseResource(poFile, language));
   }
 
@@ -158,14 +156,16 @@ export async function writeResources(
     EnvironmentFunctions & { pluginConfig: PluginConfig }
 ): ReturnType<Config["writeResources"]> {
   for (const resource of args.resources) {
+    // ?? This line avoid the write on a pot file
     // Action: prevent the user from rewriting a pot file
     // Reason:  pot Contains the keys for each msgstr
-    if (
-      args.pluginConfig.referenceResourcePath === null &&
-      resource.languageTag.name === args.config.referenceLanguage
-    ) {
-      continue;
-    }
+    // if (
+    //   args.pluginConfig.referenceResourcePath === null &&
+    //   resource.languageTag.name === args.config.referenceLanguage
+    // ) {
+    //   continue;
+    // }
+
     // Action:if a referenceResourcePath is defined, the path differs. Thus, take path from plugin config.
     // Reason:  referenceResourcePath is defined or null and we need to filter the defineded referenceResourcePath
     const resourcePath =
