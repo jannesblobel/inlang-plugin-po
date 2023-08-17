@@ -1,5 +1,5 @@
 {
-  "name": "inlang-plugin-x-select-a-name-x",
+  "name": "inlang-plugin-po",
   "type": "module",
   "module": "dist/index.js",
   "engines": {
