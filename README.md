@@ -2,6 +2,7 @@
 
 This plugin reads and writes resources, that are stored as .po file. The following features are supported:
 <!--
+Test
 I am only a test 
 -->
 - [x] ID (`"msgid": "id"`)
