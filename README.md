@@ -1,7 +1,9 @@
 # inlang-plugin-po
 
 This plugin reads and writes resources, that are stored as .po file. The following features are supported:
-
+<!--
+I am only a test 
+-->
 - [x] ID (`"msgid": "id"`)
 - [x] messages (`"msgstr": "value"`)
 
